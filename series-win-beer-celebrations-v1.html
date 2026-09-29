@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Beer Celebration Concepts · Series Win</title>
+  <style>
+    :root {
+      --bg:#071014;
+      --panel:#0b1b21;
+      --line:#28525a;
+      --cream:#fff1c9;
+      --muted:#91a9ad;
+      --coral:#ff6b4f;
+      --cyan:#63edf0;
+      --gold:#f3b83f;
+      --beer:#e9a92e;
+      --foam:#fff4d2;
+      --wood:#75402d;
+      --shadow:#020709;
+      --display:Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;
+      --body:"Avenir Next",Avenir,sans-serif;
+    }
+    * { box-sizing:border-box; }
+    body {
+      min-height:100vh;
+      margin:0;
+      overflow-x:hidden;
+      color:var(--cream);
+      font-family:var(--body);
+      background:
+        radial-gradient(circle at 10% 0,rgba(39,104,112,.34),transparent 28%),
+        radial-gradient(circle at 92% 18%,rgba(142,33,29,.28),transparent 28%),
+        var(--bg);
+    }
+    main { width:min(calc(100% - 28px),540px); margin:auto; padding:30px 0 70px; }
+    .eyebrow { margin:0 0 5px; color:var(--coral); font:400 .8rem var(--display); letter-spacing:.16em; text-transform:uppercase; }
+    h1 { margin:0; font:400 2.35rem/1 var(--display); letter-spacing:.045em; text-shadow:3px 3px 0 #8e211d; }
+    .intro { margin:9px 0 25px; color:var(--muted); font-size:.88rem; }
+    .concept { margin:0 0 23px; overflow:hidden; border:2px solid var(--line); background:var(--panel); box-shadow:7px 7px 0 var(--shadow); }
+    .concept-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; border-bottom:1px solid rgba(255,255,255,.1); }
+    .concept-head > div { min-width:0; }
+    .concept-head strong { font:400 1.18rem var(--display); letter-spacing:.035em; }
+    .concept-head small { display:block; margin-top:2px; color:var(--muted); font-size:.67rem; }
+    .replay { flex:none; border:1px solid var(--line); border-radius:2px; padding:6px 9px; color:var(--cyan); background:transparent; font:700 .68rem var(--body); cursor:pointer; }
+    .stage { position:relative; height:310px; overflow:hidden; isolation:isolate; background:linear-gradient(180deg,#0a1b20,#071014 76%); }
+    .copy { position:absolute; z-index:20; left:14px; right:14px; bottom:21px; text-align:center; opacity:0; transform:translateY(8px); animation:copy-in .45s 1.72s ease-out forwards; }
+    .copy strong { display:block; font:400 1.64rem/1 var(--display); letter-spacing:.07em; text-transform:uppercase; text-shadow:2px 2px 0 #8e211d; }
+    .copy small { display:block; margin-top:5px; color:var(--cyan); font-size:.73rem; letter-spacing:.08em; text-transform:uppercase; }
+
+    /* Reusable pixel pint */
+    .pint { position:absolute; z-index:5; width:72px; height:112px; filter:drop-shadow(6px 7px 0 rgba(0,0,0,.52)); transform-origin:50% 88%; }
+    .glass { position:absolute; inset:0; overflow:hidden; border:4px solid #b8d4d6; border-top-width:3px; clip-path:polygon(7% 0,93% 0,84% 100%,16% 100%); background:rgba(154,210,211,.12); }
+    .beer { position:absolute; left:5px; right:5px; bottom:4px; height:82%; background:linear-gradient(90deg,#c67a17,#f3b83f 35%,#d8901d 78%,#ae6210); box-shadow:inset 8px 0 rgba(255,241,201,.14),inset -8px 0 rgba(91,42,10,.18); }
+    .foam { position:absolute; z-index:2; left:4px; right:4px; top:11px; height:24px; background:var(--foam); border-bottom:3px solid #dfc889; }
+    .foam::before,.foam::after { content:""; position:absolute; border-radius:50%; background:var(--foam); }
+    .foam::before { width:28px; height:23px; left:-3px; top:-9px; box-shadow:22px 4px 0 2px var(--foam),43px -1px 0 -1px var(--foam); }
+    .foam::after { width:10px; height:18px; right:8px; top:14px; border-radius:0 0 7px 7px; }
+    .shine { position:absolute; z-index:3; left:15px; top:37px; width:6px; height:38px; background:rgba(255,255,255,.38); }
+
+    /* Option 1: Victory cheers */
+    .cheers-stage { background:radial-gradient(circle at 50% 42%,rgba(99,237,240,.12),transparent 38%),linear-gradient(180deg,#0a1b20,#071014 76%); }
+    .bar { position:absolute; z-index:2; left:0; right:0; top:211px; height:28px; border-top:5px solid #9a5b3c; background:repeating-linear-gradient(90deg,#5b3024 0 46px,#6b3828 46px 49px); box-shadow:0 7px 0 #020709; }
+    .cheers-left { left:calc(50% - 118px); top:82px; transform:translateX(-115px) rotate(-15deg); animation:cheers-left 1.25s .16s cubic-bezier(.2,.82,.22,1) both; }
+    .cheers-right { right:calc(50% - 118px); top:82px; transform:translateX(115px) rotate(15deg); animation:cheers-right 1.25s .16s cubic-bezier(.2,.82,.22,1) both; }
+    .splash { position:absolute; z-index:9; left:50%; top:69px; width:110px; height:78px; transform:translateX(-50%); opacity:0; animation:splash-pop .58s 1.08s ease-out both; }
+    .splash i { position:absolute; display:block; border-radius:50%; background:var(--foam); }
+    .splash i:nth-child(1){left:48px;top:34px;width:13px;height:25px;transform:rotate(-20deg)}
+    .splash i:nth-child(2){left:24px;top:14px;width:10px;height:20px;transform:rotate(-38deg)}
+    .splash i:nth-child(3){right:22px;top:10px;width:9px;height:22px;transform:rotate(35deg)}
+    .splash i:nth-child(4){left:8px;top:42px;width:8px;height:8px}
+    .splash i:nth-child(5){right:7px;top:37px;width:11px;height:11px}
+    .clink-star { position:absolute; z-index:10; left:50%; top:103px; color:var(--cyan); font-size:2rem; opacity:0; transform:translate(-50%,-50%); animation:star-pop .48s 1.02s ease-out both; }
+
+    /* Option 2: Cheers + pool confetti */
+    .confetti-stage { background:radial-gradient(circle at 50% 38%,rgba(255,107,79,.13),transparent 40%),linear-gradient(180deg,#0a1b20,#071014 78%); }
+    .confetti-stage .pint { top:91px; }
+    .confetti-left { left:calc(50% - 92px); transform:translate(-90px,130px) rotate(-12deg); animation:confetti-left 1.05s .1s cubic-bezier(.22,.82,.22,1.2) both; }
+    .confetti-right { right:calc(50% - 92px); transform:translate(90px,130px) rotate(12deg); animation:confetti-right 1.05s .1s cubic-bezier(.22,.82,.22,1.2) both; }
+    .burst { position:absolute; z-index:4; inset:0; pointer-events:none; }
+    .burst span { position:absolute; left:50%; top:116px; display:grid; place-items:center; width:18px; height:18px; border-radius:50%; color:#081115; font:700 .55rem var(--display); opacity:0; animation:confetti-fly .95s 1s cubic-bezier(.15,.72,.3,1) both; }
+    .burst .b1{--x:-118px;--y:-79px;background:var(--coral)} .burst .b2{--x:-75px;--y:-120px;background:var(--cyan)}
+    .burst .b3{--x:-33px;--y:-91px;background:var(--gold)} .burst .b4{--x:25px;--y:-126px;background:var(--coral)}
+    .burst .b5{--x:69px;--y:-86px;background:var(--cream)} .burst .b6{--x:118px;--y:-112px;background:var(--cyan)}
+    .burst .b7{--x:-132px;--y:-25px;background:var(--cream)} .burst .b8{--x:127px;--y:-38px;background:var(--gold)}
+    .burst .starbit { border-radius:0; width:auto; height:auto; color:var(--cyan); background:transparent; font-size:1.3rem; }
+    .confetti-clink { position:absolute; z-index:11; left:50%; top:115px; color:var(--foam); font-size:2rem; opacity:0; transform:translate(-50%,-50%); animation:star-pop .48s .92s ease-out both; }
+
+    /* Option 3: Perfect pour */
+    .pour-stage { background:radial-gradient(circle at 50% 43%,rgba(243,184,63,.13),transparent 38%),linear-gradient(180deg,#0a1b20,#071014 76%); }
+    .tap { position:absolute; z-index:8; left:50%; top:21px; width:74px; height:43px; transform:translateX(-50%); }
+    .tap::before { content:""; position:absolute; left:29px; top:0; width:17px; height:32px; background:#9aaeb0; box-shadow:inset 5px 0 #cad8d8,inset -5px 0 #53676a; }
+    .tap::after { content:""; position:absolute; left:20px; top:27px; width:34px; height:16px; background:#6d8386; box-shadow:inset 0 4px #bccbcb; }
+    .stream { position:absolute; z-index:7; left:50%; top:61px; width:8px; height:83px; transform:translateX(-50%) scaleY(0); transform-origin:top; background:linear-gradient(90deg,#c87817,#f5c451,#b86b12); animation:pour-stream 1.15s .25s ease-in-out both; }
+    .pour-glass { left:calc(50% - 36px); top:118px; filter:drop-shadow(5px 6px 0 rgba(0,0,0,.5)); }
+    .pour-glass .beer { height:0; animation:beer-fill 1.15s .35s ease-in-out forwards; }
+    .pour-glass .foam { top:auto; bottom:7px; opacity:0; animation:foam-rise 1.15s .35s ease-in-out forwards; }
+    .toast-glass { right:calc(50% - 129px); top:115px; transform:translateX(125px) rotate(13deg); animation:toast-arrive .78s 1.42s cubic-bezier(.2,.82,.22,1) both; }
+    .pour-glass { animation:pour-clink .55s 1.57s ease-out both; }
+    .pour-star { position:absolute; z-index:12; left:calc(50% + 43px); top:142px; color:var(--cyan); font-size:1.85rem; opacity:0; animation:star-pop .45s 1.77s ease-out both; }
+    .pour-stage .copy { animation-delay:2.02s; }
+
+    @keyframes copy-in { to { opacity:1; transform:none; } }
+    @keyframes cheers-left { 0%{transform:translateX(-115px) rotate(-15deg)} 62%{transform:translate(49px,-7px) rotate(13deg)} 75%{transform:translate(40px,-5px) rotate(10deg)} 100%{transform:translate(5px,0) rotate(3deg)} }
+    @keyframes cheers-right { 0%{transform:translateX(115px) rotate(15deg)} 62%{transform:translate(-49px,-7px) rotate(-13deg)} 75%{transform:translate(-40px,-5px) rotate(-10deg)} 100%{transform:translate(-5px,0) rotate(-3deg)} }
+    @keyframes splash-pop { 0%{opacity:0;transform:translateX(-50%) scale(.25)} 35%{opacity:1} 100%{opacity:0;transform:translateX(-50%) translateY(-34px) scale(1.15)} }
+    @keyframes star-pop { 0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)} 48%{opacity:1;transform:translate(-50%,-50%) scale(1.25) rotate(20deg)} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.7) rotate(50deg)} }
+    @keyframes confetti-left { 0%{transform:translate(-90px,130px) rotate(-12deg)} 68%{transform:translate(22px,-5px) rotate(12deg)} 79%{transform:translate(15px,0) rotate(8deg)} 100%{transform:translate(0,3px) rotate(2deg)} }
+    @keyframes confetti-right { 0%{transform:translate(90px,130px) rotate(12deg)} 68%{transform:translate(-22px,-5px) rotate(-12deg)} 79%{transform:translate(-15px,0) rotate(-8deg)} 100%{transform:translate(0,3px) rotate(-2deg)} }
+    @keyframes confetti-fly { 0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)} 18%{opacity:1} 72%{opacity:1} 100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1) rotate(420deg)} }
+    @keyframes pour-stream { 0%{transform:translateX(-50%) scaleY(0)} 14%,78%{transform:translateX(-50%) scaleY(1)} 100%{transform:translateX(-50%) scaleY(0)} }
+    @keyframes beer-fill { 0%{height:0} 100%{height:72%} }
+    @keyframes foam-rise { 0%{opacity:0;bottom:7px} 35%{opacity:1} 100%{opacity:1;bottom:66px} }
+    @keyframes toast-arrive { 0%{transform:translateX(125px) rotate(13deg)} 72%{transform:translate(-12px,-4px) rotate(-10deg)} 84%{transform:translate(-5px,0) rotate(-6deg)} 100%{transform:translate(0,2px) rotate(-3deg)} }
+    @keyframes pour-clink { 0%,35%{transform:rotate(0)} 55%{transform:translateX(9px) rotate(7deg)} 100%{transform:none} }
+    @media (max-width:430px) {
+      main{width:min(calc(100% - 20px),540px)}
+      .stage{height:292px}
+      h1{font-size:1.82rem}
+      .concept-head strong{font-size:1.02rem}
+      .concept-head small{font-size:.62rem;line-height:1.25}
+      .replay{padding:5px 7px}
+    }
+    @media (prefers-reduced-motion:reduce) { * { animation-duration:.001ms !important; animation-delay:0s !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Series win concepts · V1</p>
+      <h1>Raise a glass</h1>
+      <p class="intro">Three dive-bar celebrations. Tap Replay to watch one again.</p>
+    </header>
+
+    <section class="concept">
+      <div class="concept-head"><div><strong>1 · Victory Cheers</strong><small>Clean clink with a little foam splash</small></div><button class="replay" type="button">Replay</button></div>
+      <div class="stage cheers-stage">
+        <div class="bar"></div>
+        <div class="pint cheers-left"><div class="glass"><div class="beer"></div><div class="foam"></div><i class="shine"></i></div></div>
+        <div class="pint cheers-right"><div class="glass"><div class="beer"></div><div class="foam"></div><i class="shine"></i></div></div>
+        <div class="clink-star">✦</div>
+        <div class="splash"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="copy"><strong>Cheers, Vanessa!</strong><small>Series champion · 10—7</small></div>
+      </div>
+    </section>
+
+    <section class="concept">
+      <div class="concept-head"><div><strong>2 · Cheers &amp; Confetti</strong><small>Clink plus a burst of tiny pool balls</small></div><button class="replay" type="button">Replay</button></div>
+      <div class="stage confetti-stage">
+        <div class="burst"><span class="b1">V</span><span class="b2">C</span><span class="b3">8</span><span class="b4">V</span><span class="b5">C</span><span class="b6">8</span><span class="b7 starbit">✦</span><span class="b8 starbit">✦</span></div>
+        <div class="pint confetti-left"><div class="glass"><div class="beer"></div><div class="foam"></div><i class="shine"></i></div></div>
+        <div class="pint confetti-right"><div class="glass"><div class="beer"></div><div class="foam"></div><i class="shine"></i></div></div>
+        <div class="confetti-clink">✦</div>
+        <div class="copy"><strong>Vanessa takes the series!</strong><small>Final score · 10—7</small></div>
+      </div>
+    </section>
+
+    <section class="concept">
+      <div class="concept-head"><div><strong>3 · Perfect Pour</strong><small>Fill the winner's glass, then clink</small></div><button class="replay" type="button">Replay</button></div>
+      <div class="stage pour-stage">
+        <div class="tap"></div><div class="stream"></div>
+        <div class="pint pour-glass"><div class="glass"><div class="beer"></div><div class="foam"></div><i class="shine"></i></div></div>
+        <div class="pint toast-glass"><div class="glass"><div class="beer"></div><div class="foam"></div><i class="shine"></i></div></div>
+        <div class="pour-star">✦</div>
+        <div class="copy"><strong>A perfect pour for Vanessa</strong><small>Series champion · 10—7</small></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll('.replay').forEach((button) => {
+      button.addEventListener('click', () => {
+        const oldStage = button.closest('.concept').querySelector('.stage');
+        const freshStage = oldStage.cloneNode(true);
+        oldStage.replaceWith(freshStage);
+      });
+    });
+  </script>
+</body>
+</html>

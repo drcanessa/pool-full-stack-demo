@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loading Rack ’Em Tight V3…</title></head>
+<body>
+  <script>
+    fetch('/delight-rack-v1.html')
+      .then(response => response.text())
+      .then(source => {
+        const updated = source
+          .replace('DELIGHT LAB · INTRO 2', 'DELIGHT LAB · INTRO 2 · V3')
+          .replace('<title>Rack the Balls V1</title>', '<title>Rack the Balls V3</title>')
+          .replaceAll('M180 36L88 199H272Z', 'M180 18L58 205H302Z')
+          .replace('@keyframes rack-nudge{0%{transform:translateX(-25px)}18%{transform:translateX(8px)}37%{transform:translateX(-10px)}56%{transform:translateX(6px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)}}', '@keyframes rack-nudge{0%{transform:translateY(0)}18%{transform:translateY(7px)}37%{transform:translateY(1px)}56%{transform:translateY(6px)}75%{transform:translateY(2px)}100%{transform:translateY(0)}}')
+          .replace('@keyframes balls-settle{0%{transform:translateX(-7px) scale(.98)}18%{transform:translateX(4px) scale(1.01)}37%{transform:translateX(-3px)}56%{transform:translateX(2px)}100%{transform:translateX(0) scale(1)}}', '@keyframes balls-settle{0%{transform:translateY(-2px) scale(.99)}18%{transform:translateY(2px)}37%{transform:translateY(-1px)}56%{transform:translateY(1px)}100%{transform:translateY(0) scale(1)}}')
+          .replace('@keyframes tiny-jiggle{0%,100%{transform:translate(0)}18%{transform:translate(2px,-1px)}37%{transform:translate(-1px,1px)}56%{transform:translate(1px,0)}}', '@keyframes tiny-jiggle{0%,100%{transform:translateY(0)}18%{transform:translateY(1px)}37%{transform:translateY(-1px)}56%{transform:translateY(1px)}}');
+        document.open();
+        document.write(updated);
+        document.close();
+      });
+  </script>
+</body>
+</html>

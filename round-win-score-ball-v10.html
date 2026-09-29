@@ -1,0 +1,615 @@
+<!doctype html>
+<!-- Final approved Score Ball round-win animation; standalone. -->
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Score Ball · Round Win V10</title>
+  <style>
+    :root {
+      --bg: #071014;
+      --panel: #0b1b21;
+      --line: #28525a;
+      --ink: #fff1c9;
+      --muted: #91a9ad;
+      --coral: #ff6b4f;
+      --cyan: #63edf0;
+      --purple: #8757c7;
+      --purple-dark: #4c2878;
+      --shadow: #020709;
+      --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      --body: "Avenir Next", Avenir, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px 14px;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: var(--body);
+      background:
+        radial-gradient(circle at 15% 0, rgba(39, 104, 112, .35), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(92, 40, 120, .35), transparent 30%),
+        var(--bg);
+    }
+
+    main { width: min(100%, 402px); }
+    header { margin-bottom: 14px; }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--coral);
+      font: 400 .76rem var(--display);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font: 400 2rem/1 var(--display);
+      letter-spacing: .045em;
+      text-shadow: 3px 3px 0 #5b266b;
+    }
+
+    .demo-card {
+      overflow: hidden;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      box-shadow: 7px 7px 0 var(--shadow);
+    }
+
+    .demo-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .demo-head span { color: var(--muted); font-size: .72rem; }
+
+    .replay {
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 6px 9px;
+      color: var(--cyan);
+      background: transparent;
+      font: 700 .68rem var(--body);
+      cursor: pointer;
+    }
+
+    .stage {
+      position: relative;
+      height: 330px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(5, 15, 19, .52), rgba(5, 15, 19, .86)),
+        repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.018) 3px 4px),
+        radial-gradient(circle at 50% 37%, rgba(135, 87, 199, .18), transparent 32%),
+        #09191e;
+    }
+
+    .floor-line {
+      position: absolute;
+      left: 42px;
+      right: 42px;
+      top: 178px;
+      height: 3px;
+      background: #17333a;
+      box-shadow: 0 2px 0 #020709;
+    }
+
+    .ball-wrap {
+      position: absolute;
+      left: 50%;
+      top: 45px;
+      width: 126px;
+      height: 126px;
+      margin-left: -63px;
+      animation: arrive 1.08s .15s cubic-bezier(.2, .78, .2, 1) both;
+    }
+
+    .ball-roll {
+      width: 100%;
+      height: 100%;
+      animation: roll 1.08s .15s cubic-bezier(.2, .78, .2, 1) both;
+    }
+
+    .ball-flip {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-origin: center;
+      animation: horizontal-spin 1.18s 1.28s ease-in-out both;
+    }
+
+    .ball-face {
+      position: absolute;
+      inset: 7px;
+      overflow: hidden;
+      border: 7px solid #1b2931;
+      border-radius: 50%;
+      background: var(--purple);
+      box-shadow:
+        8px 9px 0 var(--shadow),
+        inset -13px -10px 0 var(--purple-dark),
+        inset 8px 7px 0 rgba(255,255,255,.11);
+    }
+
+    .ball-face::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 14px;
+      width: 30px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.62);
+      transform: rotate(-18deg);
+    }
+
+    .number-spot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 53px;
+      height: 53px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 -4px 0 #d6c69d;
+    }
+
+    .win-letter {
+      color: var(--purple-dark);
+      font: 400 2.25rem/1 var(--display);
+      opacity: 0;
+      transform: scale(.35);
+      animation: reveal-w .32s 2.38s ease-out forwards;
+    }
+
+    .sparkles {
+      position: absolute;
+      left: 50%;
+      top: 56px;
+      width: 230px;
+      height: 120px;
+      margin-left: -115px;
+      pointer-events: none;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      opacity: 0;
+      color: var(--cyan);
+      font-size: 1.4rem;
+      animation: sparkle .45s ease-out both;
+    }
+
+    .sparkle.one { left: 1px; top: 47px; animation-delay: 2.36s; }
+    .sparkle.two { right: 3px; top: 20px; animation-delay: 2.48s; }
+    .sparkle.three { right: 13px; bottom: 4px; color: var(--ink); animation-delay: 2.59s; }
+
+    .winner-copy {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 32px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(9px);
+      animation: winner-in .42s 2.65s ease-out forwards;
+    }
+
+    .winner-copy strong {
+      display: block;
+      color: var(--ink);
+      font: 400 1.85rem/1 var(--display);
+      letter-spacing: .055em;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 #5b266b, 0 0 15px rgba(135, 87, 199, .5);
+    }
+
+    .winner-copy span {
+      display: block;
+      margin-top: 7px;
+      color: var(--cyan);
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    @keyframes arrive {
+      0% { transform: translateX(-225px); }
+      72% { transform: translateX(9px); }
+      88% { transform: translateX(-4px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes roll {
+      from { transform: rotate(-480deg); }
+      to { transform: rotate(0); }
+    }
+
+    @keyframes horizontal-spin {
+      0% { transform: scaleX(1); filter: brightness(1); }
+      12.5% { transform: scaleX(.16); filter: brightness(1.2); }
+      25% { transform: scaleX(-1); filter: brightness(.76); }
+      37.5% { transform: scaleX(-.16); filter: brightness(1.2); }
+      50% { transform: scaleX(1); filter: brightness(1); }
+      62.5% { transform: scaleX(.16); filter: brightness(1.2); }
+      75% { transform: scaleX(-1); filter: brightness(.76); }
+      87.5% { transform: scaleX(-.16); filter: brightness(1.2); }
+      100% { transform: scaleX(1); filter: brightness(1); }
+    }
+
+    @keyframes reveal-w {
+      0% { opacity: 0; transform: scale(.35); }
+      70% { opacity: 1; transform: scale(1.16); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0; transform: scale(.15) rotate(0); }
+      50% { opacity: 1; transform: scale(1) rotate(14deg); }
+      100% { opacity: 0; transform: scale(1.35) rotate(30deg); }
+    }
+
+    @keyframes winner-in { to { opacity: 1; transform: none; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: .001ms !important; animation-delay: 0s !important; }
+    }
+            html.embed, .embed body { min-height:100%; background:#071014; color-scheme:dark; }
+            .embed body { padding:0; }
+            .embed main { width:100%; }
+            .embed header, .embed .demo-head { display:none; }
+            .embed .demo-card { border:0; background:transparent; box-shadow:none; }
+            .embed .stage { height:330px; background:transparent; }
+          </style>
+
+          <style>
+            body {
+              background:
+                radial-gradient(circle at 15% 0, rgba(39, 104, 112, .35), transparent 30%),
+                radial-gradient(circle at 90% 20%, rgba(126, 73, 13, .33), transparent 30%),
+                var(--bg);
+            }
+
+            h1 { text-shadow: 3px 3px 0 #7a4210; }
+
+            .stage {
+              background:
+                linear-gradient(rgba(5, 15, 19, .52), rgba(5, 15, 19, .86)),
+                repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.018) 3px 4px),
+                radial-gradient(circle at 50% 37%, rgba(219, 151, 31, .18), transparent 34%),
+                #09191e;
+            }
+
+            .ball-wrap {
+              animation: smooth-glide 1.32s .12s cubic-bezier(.18, .72, .2, 1) both;
+            }
+
+            .ball-bounce {
+              width: 100%;
+              height: 100%;
+              animation: smooth-bounce 1.32s .12s cubic-bezier(.28, .64, .34, 1) both;
+            }
+
+            .ball-roll {
+              animation: smooth-roll 1.32s .12s cubic-bezier(.2, .68, .22, 1) both;
+            }
+
+            .ball-flip {
+              animation: gentle-top-spin 1.15s 1.46s ease-in-out both;
+            }
+
+            .ball-face {
+              inset: 8px;
+              border: 0;
+              z-index: 2;
+              background:
+                radial-gradient(circle at 28% 72%, rgba(255,255,255,.85) 0 1.5px, transparent 2.4px),
+                radial-gradient(circle at 71% 25%, rgba(255,255,255,.72) 0 1.2px, transparent 2.2px),
+                radial-gradient(circle at 74% 69%, rgba(255,241,201,.62) 0 1.5px, transparent 2.5px),
+                radial-gradient(circle at 33% 29%, #ffe9a4 0 9%, #e9ae38 31%, #c47a17 68%, #7d430d 100%);
+              box-shadow:
+                7px 8px 0 rgba(2, 7, 9, .68),
+                inset -13px -11px 0 rgba(91, 45, 5, .28),
+                inset 7px 6px 0 rgba(255,255,255,.1);
+            }
+
+            .ball-face::before {
+              left: 20px;
+              top: 14px;
+              width: 34px;
+              height: 11px;
+              background: rgba(255,255,255,.82);
+              box-shadow: 13px 6px 0 -3px rgba(255,255,255,.28);
+            }
+
+            .ball-face::after { display: none; }
+
+            .number-spot {
+              z-index: 3;
+              background: #fff4d2;
+              box-shadow: inset 0 -4px 0 #d3aa54;
+            }
+
+            .win-letter {
+              color: #7a4210;
+              animation: reveal-w-v4 .32s 2.54s ease-out forwards;
+            }
+
+            .glitter {
+              position: absolute;
+              z-index: 4;
+              color: #fff8dc;
+              font-style: normal;
+              line-height: 1;
+              opacity: 0;
+              animation: glitter-twinkle .7s ease-in-out infinite alternate;
+            }
+
+            .glitter.g1 { left: 20px; top: 45px; font-size: .72rem; animation-delay: .05s; }
+            .glitter.g2 { right: 17px; top: 34px; font-size: .48rem; animation-delay: .28s; }
+            .glitter.g3 { right: 25px; bottom: 24px; font-size: .62rem; animation-delay: .48s; }
+
+            .spin-rings {
+              position: absolute;
+              z-index: 5;
+              left: -34px;
+              top: -9px;
+              width: 194px;
+              height: 144px;
+              overflow: visible;
+              pointer-events: none;
+              opacity: 0;
+              animation: rings-visible 1.25s 1.4s ease-in-out both;
+            }
+
+            .spin-rings ellipse {
+              fill: none;
+              stroke: rgba(255,255,255,.88);
+              stroke-width: 4;
+              stroke-linecap: round;
+              stroke-dasharray: 76 34;
+            }
+
+            .orbit-a { animation: orbit-forward .46s linear infinite; }
+            .orbit-b { opacity: .58; animation: orbit-back .56s linear infinite; }
+            .orbit-c { opacity: .34; animation: orbit-forward .68s linear infinite; }
+
+            .winner-copy {
+              animation: winner-in .42s 2.82s ease-out forwards;
+            }
+
+            .winner-copy strong {
+              text-shadow: 3px 3px 0 #7a4210, 0 0 16px rgba(219, 151, 31, .55);
+            }
+
+            .sparkle.one { animation-delay: 2.58s; }
+            .sparkle.two { animation-delay: 2.68s; }
+            .sparkle.three { animation-delay: 2.76s; }
+
+            @keyframes smooth-glide {
+              0% { transform: translateX(-225px); }
+              82% { transform: translateX(6px); }
+              100% { transform: translateX(0); }
+            }
+
+            @keyframes smooth-bounce {
+              0% { transform: translateY(-54px); }
+              50% { transform: translateY(0); }
+              69% { transform: translateY(-22px); }
+              84% { transform: translateY(0); }
+              93% { transform: translateY(-6px); }
+              100% { transform: translateY(0); }
+            }
+
+            @keyframes smooth-roll {
+              from { transform: rotate(-540deg); }
+              to { transform: rotate(0); }
+            }
+
+            @keyframes gentle-top-spin {
+              0% { transform: rotate(0); }
+              30% { transform: rotate(-2deg); }
+              62% { transform: rotate(2deg); }
+              100% { transform: rotate(0); }
+            }
+
+            @keyframes rings-visible {
+              0%, 8% { opacity: 0; transform: scale(.9); }
+              20%, 76% { opacity: 1; transform: scale(1); }
+              100% { opacity: 0; transform: scale(1.04); }
+            }
+
+            @keyframes orbit-forward { to { stroke-dashoffset: -110; } }
+            @keyframes orbit-back { to { stroke-dashoffset: 110; } }
+
+            @keyframes glitter-twinkle {
+              from { opacity: .25; transform: scale(.68) rotate(0); }
+              to { opacity: 1; transform: scale(1.12) rotate(18deg); }
+            }
+
+
+            .number-spot {
+              animation: face-orbit-v7 1.8s 1.34s linear both;
+              will-change: left, transform, opacity, border-radius;
+            }
+
+            .win-letter {
+              animation: reveal-w-v4 .32s 3.14s ease-out forwards !important;
+            }
+
+            .spin-rings {
+              animation: rings-visible-v7 1.9s 1.38s ease-in-out both !important;
+            }
+
+
+
+            .ball-wrap {
+              isolation: isolate;
+            }
+
+            .ball-bounce {
+              position: relative;
+              z-index: 2;
+            }
+
+            .spin-rings-back {
+              z-index: 1;
+              clip-path: none;
+            }
+
+            .spin-rings-front {
+              z-index: 5;
+              clip-path: inset(50% 0 0 0);
+            }
+
+            .spin-rings ellipse {
+              transform: none !important;
+              transform-origin: center;
+            }
+
+            .winner-copy {
+              animation: winner-in .42s 3.42s ease-out forwards !important;
+            }
+
+            .sparkle.one { animation-delay: 3.18s !important; }
+            .sparkle.two { animation-delay: 3.28s !important; }
+            .sparkle.three { animation-delay: 3.36s !important; }
+
+            @keyframes face-orbit-v7 {
+              0%, 50%, 100% {
+                left: 50%;
+                opacity: 1;
+                border-radius: 50%;
+                transform: translate(-50%, -50%) scaleX(1) skewY(0deg);
+              }
+              12%, 62% {
+                left: 75%;
+                opacity: 1;
+                border-radius: 52% 22% 22% 52% / 50%;
+                transform: translate(-50%, -50%) scaleX(.62) skewY(-5deg);
+              }
+              23%, 73% {
+                left: 90%;
+                opacity: .35;
+                border-radius: 62% 10% 10% 62% / 50%;
+                transform: translate(-50%, -50%) scaleX(.12) skewY(-10deg);
+              }
+              25%, 75% {
+                left: 94%;
+                opacity: 0;
+                border-radius: 70% 5% 5% 70% / 50%;
+                transform: translate(-50%, -50%) scaleX(.02) skewY(-12deg);
+              }
+              25.1%, 75.1% {
+                left: 6%;
+                opacity: 0;
+                border-radius: 5% 70% 70% 5% / 50%;
+                transform: translate(-50%, -50%) scaleX(.02) skewY(12deg);
+              }
+              27%, 77% {
+                left: 10%;
+                opacity: .35;
+                border-radius: 10% 62% 62% 10% / 50%;
+                transform: translate(-50%, -50%) scaleX(.12) skewY(10deg);
+              }
+              38%, 88% {
+                left: 25%;
+                opacity: 1;
+                border-radius: 22% 52% 52% 22% / 50%;
+                transform: translate(-50%, -50%) scaleX(.62) skewY(5deg);
+              }
+            }
+
+            @keyframes rings-visible-v7 {
+              0%, 6% { opacity: 0; transform: scale(.9); }
+              15%, 82% { opacity: .82; transform: scale(1); }
+              100% { opacity: 0; transform: scale(1.04); }
+            }
+
+            @keyframes reveal-w-v4 {
+              0% { opacity: 0; transform: scale(.35); }
+              70% { opacity: 1; transform: scale(1.16); }
+              100% { opacity: 1; transform: scale(1); }
+            }
+          </style></head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Round win · Animation 2 · V10</p>
+      <h1>Score ball</h1>
+    </header>
+
+    <section class="demo-card">
+      <div class="demo-head">
+        <span>Glittering gold victory ball</span>
+        <button class="replay" type="button">Replay</button>
+      </div>
+
+      <div class="stage">
+        <div class="floor-line"></div>
+
+        <div class="ball-wrap" aria-label="A glittering gold pool ball bounces in, spins with white orbit lines, and reveals a W">
+          <svg class="spin-rings spin-rings-back" viewBox="0 0 194 144" aria-hidden="true">
+            <ellipse class="orbit-c" cx="97" cy="72" rx="86" ry="33" transform="rotate(-12 97 72)"></ellipse>
+            <ellipse class="orbit-b" cx="97" cy="72" rx="78" ry="25" transform="rotate(8 97 72)"></ellipse>
+            <ellipse class="orbit-a" cx="97" cy="72" rx="88" ry="19" transform="rotate(-4 97 72)"></ellipse>
+          </svg>
+          <svg class="spin-rings spin-rings-front" viewBox="0 0 194 144" aria-hidden="true">
+            <ellipse class="orbit-c" cx="97" cy="72" rx="86" ry="33"></ellipse>
+            <ellipse class="orbit-b" cx="97" cy="72" rx="78" ry="25"></ellipse>
+            <ellipse class="orbit-a" cx="97" cy="72" rx="88" ry="19"></ellipse>
+          </svg>
+          <div class="ball-bounce">
+            <div class="ball-roll">
+              <div class="ball-flip">
+                <div class="ball-face">
+                  <i class="glitter g1">✦</i>
+                  <i class="glitter g2">✦</i>
+                  <i class="glitter g3">✦</i>
+                  <div class="number-spot"><span class="win-letter">W</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sparkles" aria-hidden="true">
+          <i class="sparkle one">✦</i>
+          <i class="sparkle two">✧</i>
+          <i class="sparkle three">✦</i>
+        </div>
+
+        <div class="winner-copy">
+          <strong>Secured the W</strong>
+          <span>Vanessa takes the round</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.has('embed')) document.documentElement.classList.add('embed');
+    const winner = params.get('winner');
+    if (winner) document.querySelector('.winner-copy span').textContent = `${winner} takes the round`;
+    document.querySelector('.replay').addEventListener('click', () => {
+      const oldStage = document.querySelector('.stage');
+      const freshStage = oldStage.cloneNode(true);
+      oldStage.replaceWith(freshStage);
+    });
+  </script>
+</body></html>

@@ -1,0 +1,319 @@
+<!doctype html>
+<!-- Final approved pocket-drop prototype; intentionally standalone. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pocket Drop · Round Win V8</title>
+  <style>
+    :root {
+      --bg: #071014;
+      --panel: #0b1b21;
+      --line: #28525a;
+      --felt: #164a45;
+      --felt-light: #1c5b53;
+      --wood: #82503a;
+      --wood-light: #a96a48;
+      --cream: #fff1c9;
+      --muted: #91a9ad;
+      --coral: #ff6b4f;
+      --cyan: #63edf0;
+      --shadow: #020709;
+      --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      --body: "Avenir Next", Avenir, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px 14px;
+      overflow-x: hidden;
+      color: var(--cream);
+      font-family: var(--body);
+      background:
+        radial-gradient(circle at 15% 0, rgba(39, 104, 112, .35), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(142, 33, 29, .32), transparent 30%),
+        var(--bg);
+    }
+
+    main { width: min(100%, 402px); }
+
+    header { margin-bottom: 14px; }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--coral);
+      font: 400 .76rem var(--display);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font: 400 2rem/1 var(--display);
+      letter-spacing: .045em;
+      text-shadow: 3px 3px 0 #8e211d;
+    }
+
+    .demo-card {
+      overflow: hidden;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      box-shadow: 7px 7px 0 var(--shadow);
+    }
+
+    .demo-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .demo-head span {
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .replay {
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 6px 9px;
+      color: var(--cyan);
+      background: transparent;
+      font: 700 .68rem var(--body);
+      cursor: pointer;
+    }
+
+    .stage {
+      position: relative;
+      height: 370px;
+      overflow: hidden;
+      background: linear-gradient(#09191e, #081115);
+    }
+
+    .table-art {
+      position: absolute;
+      inset: 18px 10px auto;
+      width: calc(100% - 20px);
+      height: auto;
+      filter: drop-shadow(6px 8px 0 var(--shadow));
+    }
+
+    .table-arrive { animation: table-arrive .38s ease-out both; }
+
+    .ball-travel {
+      transform-box: view-box;
+      transform-origin: 105px 84px;
+      animation: travel-to-pocket 1.32s .25s cubic-bezier(.25, .63, .28, 1) both;
+    }
+
+    .ball-spin {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: ball-spin 1.32s .25s linear both;
+    }
+
+    .pocket-ring {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pocket-pulse .48s 1.43s ease-out both;
+    }
+
+    .sparkle {
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: sparkle-pop .48s ease-out both;
+    }
+
+    .sparkle.one { animation-delay: 1.46s; }
+    .sparkle.two { animation-delay: 1.58s; }
+    .sparkle.three { animation-delay: 1.7s; }
+
+    .winner-copy {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 27px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(9px);
+      animation: winner-in .42s 1.75s ease-out forwards;
+    }
+
+    .winner-copy small {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--cyan);
+      font-size: .67rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .winner-copy strong {
+      display: block;
+      color: var(--cream);
+      font: 400 1.72rem/1.02 var(--display);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 #8e211d, 0 0 15px rgba(255, 107, 79, .4);
+    }
+
+    .winner-copy span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    @keyframes table-arrive {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes travel-to-pocket {
+      0%, 10% { transform: translate(0, 0) scale(1); opacity: 1; }
+      72% { transform: translate(178px, 101px) scale(1); opacity: 1; }
+      84% { transform: translate(192px, 110px) scale(.78); opacity: 1; }
+      100% { transform: translate(201px, 118px) scale(.12); opacity: 0; }
+    }
+
+    @keyframes ball-spin {
+      from { transform: rotate(0); }
+      to { transform: rotate(540deg); }
+    }
+
+    @keyframes pocket-pulse {
+      0% { opacity: 0; transform: scale(.65); }
+      45% { opacity: 1; transform: scale(1.13); }
+      100% { opacity: 0; transform: scale(1.45); }
+    }
+
+    @keyframes sparkle-pop {
+      0% { opacity: 0; transform: scale(.1) rotate(0); }
+      48% { opacity: 1; transform: scale(1) rotate(15deg); }
+      100% { opacity: 0; transform: scale(1.35) rotate(35deg); }
+    }
+
+    @keyframes winner-in {
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: .001ms !important; animation-delay: 0s !important; }
+    }
+
+    html.embed, .embed body { min-height:100%; background:#071014; color-scheme:dark; }
+    .embed body { padding:0; }
+    .embed main { width:100%; }
+    .embed header, .embed .demo-head { display:none; }
+    .embed .demo-card { border:0; background:transparent; box-shadow:none; }
+    .embed .stage { height:370px; background:transparent; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Round win · V8</p>
+      <h1>Pocket drop</h1>
+    </header>
+
+    <section class="demo-card">
+      <div class="demo-head">
+        <span>Reference-matched six-pocket table</span>
+        <button class="replay" type="button">Replay</button>
+      </div>
+
+      <div class="stage">
+        <svg class="table-art" viewBox="0 0 340 245" role="img" aria-label="An 8-ball rolling into a rail-set pocket on a six-pocket pool table">
+          <g class="table-arrive">
+            <defs>
+              <linearGradient id="woodGlow" x1="18" y1="14" x2="322" y2="219" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#a96a48" />
+                <stop offset=".5" stop-color="#82503a" />
+                <stop offset="1" stop-color="#623927" />
+              </linearGradient>
+              <linearGradient id="feltGlow" x1="42" y1="39" x2="298" y2="194" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1c5b53" />
+                <stop offset="1" stop-color="#103a39" />
+              </linearGradient>
+              <radialGradient id="sightGlow" cx="35%" cy="30%" r="70%">
+                <stop stop-color="#b6d5d8" />
+                <stop offset=".42" stop-color="#66888e" />
+                <stop offset="1" stop-color="#28464c" />
+              </radialGradient>
+            </defs>
+
+            <rect x="18" y="14" width="304" height="205" rx="11" fill="url(#woodGlow)" stroke="#b3734e" stroke-width="5" />
+            <rect x="29" y="25" width="282" height="183" rx="4" fill="#0d3332" stroke="#44271f" stroke-width="2" />
+
+            <path d="M31 27H309L298 39H42Z" fill="#1f6657" stroke="#102f31" stroke-width="2" />
+            <path d="M31 206H309L298 194H42Z" fill="#123f3b" stroke="#102f31" stroke-width="2" />
+            <path d="M31 27L42 39V194L31 206Z" fill="#195149" stroke="#102f31" stroke-width="2" />
+            <path d="M309 27L298 39V194L309 206Z" fill="#103d3a" stroke="#102f31" stroke-width="2" />
+            <rect x="42" y="39" width="256" height="155" fill="url(#feltGlow)" stroke="#24665f" stroke-width="2" />
+
+            <g fill="url(#sightGlow)" stroke="#17333a" stroke-width=".8">
+              <circle cx="92" cy="21" r="3" /><circle cx="142" cy="21" r="3" />
+              <circle cx="198" cy="21" r="3" /><circle cx="248" cy="21" r="3" />
+              <circle cx="92" cy="213" r="3" /><circle cx="142" cy="213" r="3" />
+              <circle cx="198" cy="213" r="3" /><circle cx="248" cy="213" r="3" />
+              <circle cx="24" cy="82" r="3" /><circle cx="24" cy="147" r="3" />
+              <circle cx="316" cy="82" r="3" /><circle cx="316" cy="147" r="3" />
+            </g>
+
+            <g fill="#020709" stroke="#789aa1" stroke-width="2.5">
+              <circle cx="34" cy="30" r="13" />
+              <circle cx="170" cy="27" r="13" />
+              <circle cx="306" cy="30" r="13" />
+              <circle cx="34" cy="202" r="13" />
+              <circle cx="170" cy="206" r="13" />
+              <circle cx="306" cy="202" r="13" />
+            </g>
+
+            <circle class="pocket-ring" cx="306" cy="202" r="16" fill="none" stroke="#63edf0" stroke-width="3" opacity="0" />
+
+            <g class="ball-travel">
+              <g class="ball-spin">
+                <circle cx="105" cy="84" r="22" fill="#05090b" stroke="#17333a" stroke-width="5" />
+                <circle cx="105" cy="84" r="10" fill="#fff1c9" />
+                <text x="105" y="90" text-anchor="middle" fill="#071014" font-family="Impact, sans-serif" font-size="16">8</text>
+                <path d="M91 69c6-6 13-7 19-4" fill="none" stroke="#59676a" stroke-width="4" stroke-linecap="round" />
+              </g>
+            </g>
+
+            <g fill="#63edf0">
+              <path class="sparkle one" d="M267 161l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" />
+              <path class="sparkle two" d="M315 153l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" />
+              <path class="sparkle three" d="M271 205l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />
+            </g>
+          </g>
+        </svg>
+
+        <div class="winner-copy">
+          <strong>Vanessa takes the round!</strong>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.has('embed')) document.documentElement.classList.add('embed');
+    const winner = params.get('winner');
+    if (winner) {
+      document.querySelector('.winner-copy strong').textContent = `${winner} takes the round!`;
+    }
+    document.querySelector('.replay').addEventListener('click', () => {
+      const oldStage = document.querySelector('.stage');
+      const freshStage = oldStage.cloneNode(true);
+      oldStage.replaceWith(freshStage);
+    });
+  </script>
+</body>
+</html>

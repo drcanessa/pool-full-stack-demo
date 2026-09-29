@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loading Send the Cue Ball V3…</title></head>
+<body>
+  <script>
+    fetch('/delight-cue-ball-v1.html')
+      .then(response => response.text())
+      .then(source => {
+        const updated = source
+          .replace('DELIGHT LAB · INTRO 3', 'DELIGHT LAB · INTRO 3 · V3')
+          .replace('<title>Send the Cue Ball V1</title>', '<title>Send the Cue Ball V3</title>')
+          .replace('.cue-ball{transform-origin:160px 126px;animation:ball-roll 1.45s cubic-bezier(.22,.72,.18,1) both}', '.cue-ball{transform-origin:166px 126px;transform-box:view-box;animation:ball-roll 1.25s linear both}')
+          .replace('<path d="M18 126H127" stroke="#bd7640" stroke-width="18" stroke-linecap="round"/><path d="M18 126H127" stroke="#f4d8a1" stroke-width="9" stroke-linecap="round"/><path d="M125 126H141" stroke="#63edf0" stroke-width="11" stroke-linecap="round"/><path d="M138 126H145" stroke="#17333a" stroke-width="12" stroke-linecap="round"/>', '<path d="M18 126H129" stroke="#bd7640" stroke-width="12" stroke-linecap="round"/><path d="M54 126H138" stroke="#f4d8a1" stroke-width="12" stroke-linecap="butt"/><path d="M138 126H146" stroke="#63edf0" stroke-width="12" stroke-linecap="butt"/>')
+          .replace('@keyframes ball-roll{0%,38%{transform:translateX(0) rotate(0)}55%{transform:translateX(45px) rotate(100deg)}78%{transform:translateX(112px) rotate(260deg)}100%{transform:translateX(172px) rotate(420deg)}}', '@keyframes ball-roll{0%,38%{transform:translateX(0) rotate(0)}100%{transform:translateX(172px) rotate(420deg)}}');
+        document.open();
+        document.write(updated);
+        document.close();
+      });
+  </script>
+</body>
+</html>

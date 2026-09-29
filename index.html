@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#09070f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="VC & CV Pool Demo" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/pool-neon-180.png" />
+    <title>VC & CV Pool Series — Demo</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/styles.css?v=170" />
+  </head>
+  <body>
+    <div class="felt-glow" aria-hidden="true"></div>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="page-kicker">Ready to break?</p>
+          <h1 id="page-title">VC &amp; CV POOL SERIES</h1>
+        </div>
+      </header>
+
+      <section id="play-view" class="view"></section>
+      <section id="game-view" class="view hidden"></section>
+      <section id="history-view" class="view hidden"></section>
+      <section id="stats-view" class="view hidden"></section>
+
+      <nav class="tabs" aria-label="Main navigation">
+        <button class="tab active" data-view="play"><span class="nav-icon nav-icon-home" aria-hidden="true"></span>Home</button>
+        <button class="tab" data-view="game"><span class="nav-icon nav-icon-game" aria-hidden="true"></span>Game</button>
+        <button class="tab" data-view="history"><span class="nav-icon nav-icon-history" aria-hidden="true"></span>History</button>
+        <button class="tab" data-view="stats"><span class="nav-icon nav-icon-stats" aria-hidden="true"></span>Stats</button>
+      </nav>
+    </main>
+
+    <dialog id="access-dialog">
+      <form id="access-form" class="dialog-card access-card">
+        <div class="dialog-heading"><h2>Scorecard Passcode</h2><button type="button" class="close-button" data-close aria-label="Close">×</button></div>
+        <label>Passcode<input name="passcode" type="password" autocomplete="current-password" required /></label>
+        <p id="access-error" class="access-error hidden" role="alert"></p>
+        <div class="form-actions"><button type="button" class="secondary-button" data-view-only>View only</button><button class="primary-button">Unlock editing</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="edit-menu-dialog">
+      <div class="dialog-card edit-menu-card">
+        <button type="button" class="close-button edit-menu-close" data-close aria-label="Close">×</button>
+        <div id="edit-menu-content"></div>
+      </div>
+    </dialog>
+
+    <dialog id="series-dialog">
+      <form id="series-form" method="dialog" class="dialog-card">
+        <input type="hidden" name="seriesId" />
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow" id="series-dialog-kicker">Rack 'em up</p>
+            <h2 id="series-dialog-title">New series</h2>
+          </div>
+          <button type="button" class="close-button" data-close aria-label="Close">×</button>
+        </div>
+        <label>Series name <span>optional</span><input name="name" placeholder="The Craft Cup" /></label>
+        <label>Prize <span>can decide later</span><textarea name="challenge" placeholder="Make the winner a craft"></textarea></label>
+        <label>First to<input name="target" type="number" inputmode="numeric" min="1" max="99" value="10" required /></label>
+        <div class="form-actions">
+          <button type="button" class="secondary-button" data-close>Cancel</button>
+          <button class="primary-button" id="series-submit-button" value="default">Start series</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="round-dialog">
+      <form id="round-form" method="dialog" class="dialog-card">
+        <input type="hidden" name="seriesId" />
+        <input type="hidden" name="roundId" />
+        <div class="dialog-heading">
+          <div><p class="eyebrow" id="round-progress">Question 1 of 4</p><h2 id="round-question">Who won?</h2></div>
+          <button type="button" class="close-button" data-close aria-label="Close">×</button>
+        </div>
+        <div class="round-step" data-round-step="1">
+          <h3 class="edit-only">Winner</h3>
+          <fieldset class="choice-grid winner-grid">
+            <label class="choice"><input type="radio" name="winner" value="Vanessa" required /><span>Vanessa</span></label>
+            <label class="choice"><input type="radio" name="winner" value="Carl" required /><span>Carl</span></label>
+          </fieldset>
+        </div>
+        <div class="round-step hidden" data-round-step="2">
+          <h3 class="edit-only">How?</h3>
+          <fieldset class="choice-grid reason-grid">
+            <label class="choice"><input type="radio" name="reason" value="Fair win" required /><span>🏆 Fair win</span></label>
+            <label class="choice"><input type="radio" name="reason" value="Sank the 8-ball early" required /><span>🎱 Sank the 8-ball early</span></label>
+            <label class="choice"><input type="radio" name="reason" value="8-ball in the wrong pocket" required /><span>🚫 8-ball in wrong pocket</span></label>
+            <label class="choice"><input type="radio" name="reason" value="Sunk the cue ball" required /><span>⚪️ Sunk the cue ball</span></label>
+            <label class="choice"><input type="radio" name="reason" value="Other" required /><span>💬 Other</span></label>
+          </fieldset>
+          <label id="other-reason-wrap" class="hidden">What happened?<input name="otherReason" placeholder="Short explanation" /></label>
+        </div>
+        <div class="round-step hidden" data-round-step="3">
+          <h3 class="edit-only">Where?</h3>
+          <fieldset class="choice-grid location-grid">
+            <label class="choice"><input type="radio" name="location" value="💗 AMLI Arc" required /><span>💗 AMLI Arc</span></label>
+            <label class="choice"><input type="radio" name="location" value="🍺 Real Bar" required /><span>🍺 Real Bar</span></label>
+          </fieldset>
+          <label id="bar-name-wrap" class="hidden">Which bar? <span>optional</span><input name="barName" placeholder="The High Dive" /></label>
+        </div>
+        <div class="round-step hidden" data-round-step="4">
+          <label class="edit-only">Date played<input type="date" name="playedOn" required /></label>
+          <textarea name="note" placeholder="Optional" aria-label="Anything notable?"></textarea>
+        </div>
+        <div class="wizard-actions">
+          <button type="button" class="secondary-button round-back-button hidden" data-round-back><span aria-hidden="true">←</span> Back</button>
+          <button type="button" class="secondary-button edit-cancel hidden" data-close>Cancel</button>
+          <button type="button" class="primary-button hidden" data-round-next>Continue</button>
+          <button class="primary-button hidden" data-round-save>Record victory</button>
+        </div>
+        <button type="button" class="danger-button edit-delete-round" data-delete-edit-round>Delete round</button>
+      </form>
+    </dialog>
+
+    <dialog id="run-dialog">
+      <form id="run-form" method="dialog" class="dialog-card">
+        <input type="hidden" name="player" />
+        <div class="dialog-heading"><div><p class="eyebrow">New personal best</p><h2 id="run-dialog-title">Add best run</h2></div><button type="button" class="close-button" data-close aria-label="Close">×</button></div>
+        <label id="run-choice-wrap" class="hidden">Choose a run to edit
+          <select name="runId" aria-hidden="true" tabindex="-1"></select>
+          <button type="button" class="run-choice-trigger" data-run-choice-toggle aria-expanded="false"><span>Choose a run</span><b aria-hidden="true">⌄</b></button>
+          <div class="run-choice-list hidden" data-run-choice-list></div>
+        </label>
+        <label>Most balls sunk in a row<input type="number" name="count" inputmode="numeric" min="1" max="15" required /></label>
+        <label>Date it happened<input type="date" name="playedOn" required /></label>
+        <div class="form-actions">
+          <button type="button" class="secondary-button" data-close>Cancel</button>
+          <button class="primary-button">Save best run</button>
+        </div>
+        <button type="button" class="danger-button hidden" data-delete-run>Delete this run</button>
+      </form>
+    </dialog>
+
+    <div id="series-intro" class="series-intro hidden" aria-hidden="true">
+      <div class="series-intro-card">
+        <div id="series-intro-art"></div>
+        <p id="series-intro-title">RACK 'EM UP</p>
+        <small>Getting <span id="series-intro-name">your series</span> ready…</small>
+      </div>
+    </div>
+
+    <div id="round-win-celebration" class="round-win-celebration hidden" aria-hidden="true">
+      <iframe id="round-win-frame" title="Victory celebration"></iframe>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js?v=171" defer></script>
+  </body>
+</html>

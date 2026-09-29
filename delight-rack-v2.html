@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Loading Rack ’Em Tight V2…</title></head>
+<body>
+  <script>
+    fetch('/delight-rack-v1.html')
+      .then(response => response.text())
+      .then(source => {
+        const updated = source
+          .replace('DELIGHT LAB · INTRO 2', 'DELIGHT LAB · INTRO 2 · V2')
+          .replace('<title>Rack the Balls V1</title>', '<title>Rack the Balls V2</title>')
+          .replaceAll('M180 36L88 199H272Z', 'M180 25L66 211H294Z');
+        document.open();
+        document.write(updated);
+        document.close();
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071014" />
+    <title>Ball Parade · Best Run V3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071014;
+        --panel: #0b1b21;
+        --line: #28525a;
+        --cream: #fff1c9;
+        --muted: #91a9ad;
+        --coral: #ff6b4f;
+        --red: #8e211d;
+        --cyan: #63edf0;
+        --gold: #f3c552;
+        --shadow: #020709;
+        --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+        --body: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --pixel: "Press Start 2P", Monaco, monospace;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { width: 100%; min-height: 100%; margin: 0; overflow-x: hidden; }
+      body {
+        display: grid;
+        place-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+        color: var(--cream);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.014) 3px 4px),
+          radial-gradient(circle at 14% 4%, rgba(99,237,240,.14), transparent 30%),
+          radial-gradient(circle at 88% 16%, rgba(255,107,79,.14), transparent 28%),
+          var(--bg);
+        font-family: var(--body);
+      }
+      main { width: min(100%, 620px); }
+      header { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+      .kicker { margin: 0 0 4px; color: var(--coral); font: 400 .72rem/1 var(--display); letter-spacing: .15em; text-transform: uppercase; }
+      h1 { margin: 0; font: 400 1.75rem/1 var(--display); letter-spacing: .04em; text-shadow: 3px 3px 0 var(--red); }
+      .replay { border: 0; padding: 7px 0; color: var(--cyan); background: transparent; font: 700 .8rem var(--body); cursor: pointer; }
+      .frame { overflow: hidden; border: 2px solid var(--line); background: var(--panel); box-shadow: 7px 7px 0 var(--shadow); }
+      .frame-label { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.1); color: var(--coral); font: 400 .75rem var(--display); letter-spacing: .13em; text-transform: uppercase; }
+      .stage { position: relative; width: 100%; aspect-ratio: 360 / 310; overflow: hidden; isolation: isolate; background: linear-gradient(180deg, #09191e, #061014 82%); }
+
+      .heading { position: absolute; z-index: 3; left: 16px; right: 16px; top: 48px; text-align: center; opacity: 0; animation: title-pop .5s .22s steps(5,end) forwards; }
+      .heading h2 { margin: 0; color: var(--cyan); font: 400 clamp(1.05rem,3.7vw,1.45rem)/1.35 var(--pixel); letter-spacing: -.03em; text-transform: uppercase; text-shadow: 3px 3px 0 #12535a,0 0 8px rgba(99,237,240,.38); }
+      .player { margin: 13px 0 0; color: var(--coral); font: 400 clamp(.9rem,3.4vw,1.15rem)/1.3 var(--pixel); letter-spacing: .07em; text-transform: uppercase; text-shadow: 2px 2px 0 var(--red); }
+      .run-number { position: absolute; z-index: 5; left: 0; right: 0; top: 110px; color: var(--cyan); font: 400 clamp(4.15rem,15vw,5.7rem)/1 var(--pixel); letter-spacing: -.09em; text-align: center; text-shadow: 5px 5px 0 #12535a,0 0 10px rgba(99,237,240,.48); opacity: 0; transform: scale(.55); animation: number-pop .52s .62s steps(5,end) forwards; }
+
+      .floor { position: absolute; z-index: 1; left: 22px; right: 22px; bottom: 18px; height: 4px; border-radius: 50%; background: #21454d; box-shadow: 0 5px 0 var(--shadow); }
+      .ball-row { position: absolute; z-index: 2; left: 22px; right: 22px; bottom: 22px; display: flex; justify-content: center; align-items: end; gap: clamp(3px,1vw,7px); }
+      .ball-slot { position: relative; flex: 0 0 var(--ball-size); width: var(--ball-size); aspect-ratio: 1; opacity: 0; transform: translateX(-235px) rotate(-390deg); animation: ball-roll .62s cubic-bezier(.2,.78,.24,1.08) forwards; }
+      .ball {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border: 3px solid var(--shadow);
+        border-radius: 50%;
+        background: var(--ball-color);
+        box-shadow: 4px 5px 0 rgba(0,0,0,.5), inset -5px -4px 0 rgba(0,0,0,.13);
+      }
+      .ball.striped { background: var(--cream); }
+      .ball.striped::after { content: ""; position: absolute; left: -10%; right: -10%; top: 29%; height: 42%; background: var(--ball-color); }
+      .ball::before { content: ""; position: absolute; z-index: 2; left: 19%; top: 14%; width: 27%; height: 14%; border-radius: 50%; background: rgba(255,255,255,.7); transform: rotate(-28deg); }
+      .winner-ball { filter: drop-shadow(0 0 7px rgba(243,197,82,.68)); }
+      .winner-ball .ball { border-color: var(--gold); }
+
+      .pixel-crown { position: absolute; z-index: 7; width: 31px; height: 25px; left: 50%; top: -27px; opacity: 0; transform: translate(-50%,-24px); animation: crown-land .5s var(--crown-delay) steps(5,end) forwards; }
+      .pixel-crown::before { content: ""; position: absolute; inset: 7px 2px 2px; background: var(--gold); box-shadow: 0 4px 0 #b86d22; clip-path: polygon(0 0,23% 35%,42% 0,62% 35%,86% 0,100% 100%,0 100%); }
+      .pixel-crown::after { content: ""; position: absolute; left: 7px; right: 7px; bottom: 0; height: 4px; background: var(--cream); }
+
+      .spark { position: absolute; z-index: 5; width: 8px; height: 8px; opacity: 0; clip-path: polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%); animation: sparkle .62s var(--finish-delay) steps(4,end) forwards; }
+      .spark.s1 { left: 70px; bottom: 86px; background: var(--cream); }
+      .spark.s2 { right: 68px; bottom: 92px; background: var(--cyan); animation-delay: calc(var(--finish-delay) + .12s); }
+      .spark.s3 { right: 110px; bottom: 45px; background: var(--gold); animation-delay: calc(var(--finish-delay) + .2s); }
+
+      @keyframes title-pop {
+        0% { opacity: 0; transform: translateY(-9px); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes number-pop {
+        0% { opacity: 0; transform: scale(.55); }
+        76% { opacity: 1; transform: scale(1.08); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes ball-roll {
+        0% { opacity: 0; transform: translateX(-235px) rotate(-390deg); }
+        72% { opacity: 1; transform: translateX(4px) rotate(9deg); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes crown-land {
+        0% { opacity: 0; transform: translate(-50%,-24px); }
+        74% { opacity: 1; transform: translate(-50%,3px); }
+        100% { opacity: 1; transform: translate(-50%,0); }
+      }
+      @keyframes sparkle {
+        0% { opacity: 0; transform: scale(.2) rotate(0); }
+        48% { opacity: 1; }
+        100% { opacity: 0; transform: scale(2) rotate(45deg); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: .001ms !important; animation-delay: 0s !important; }
+      }
+      html.embed, .embed body { height: 100%; }
+      .embed body { min-height: 100%; padding: 0; background: #071014; color-scheme: dark; }
+      .embed main { width: min(100%, 402px); }
+      .embed header, .embed .frame-label { display: none; }
+      .embed .frame { border: 0; box-shadow: none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="kicker">Best-run animation · V3</p>
+          <h1>Ball Parade</h1>
+        </div>
+        <button class="replay" type="button" data-replay>↻ Replay</button>
+      </header>
+
+      <section class="frame">
+        <div class="frame-label">Best run</div>
+        <div class="stage" data-stage>
+          <div class="heading">
+            <h2>New Best Run!</h2>
+            <p class="player" data-player>Vanessa</p>
+          </div>
+          <div class="run-number" data-run>7</div>
+          <div class="ball-row" data-ball-row></div>
+          <div class="floor"></div>
+          <i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(location.search);
+      if (params.has("embed")) document.documentElement.classList.add("embed");
+      const player = params.get("player") || "Vanessa";
+      const run = Math.max(1, Math.min(15, Number.parseInt(params.get("run"), 10) || 7));
+      const colors = ["#ff6b4f", "#63edf0", "#f3c552", "#ff6b4f", "#63edf0", "#ff6b4f", "#f3c552", "#63edf0"];
+      const stripedBalls = new Set([3, 5, 7]);
+
+      function populate(stage) {
+        stage.querySelector("[data-player]").textContent = player;
+        stage.querySelector("[data-run]").textContent = run;
+        const row = stage.querySelector("[data-ball-row]");
+        row.innerHTML = "";
+        const visible = run;
+        const gap = visible > 10 ? 2 : visible > 8 ? 3 : 5;
+        const availableWidth = Math.max(250, stage.clientWidth - 44);
+        const ballSize = Math.max(18, Math.min(42, Math.floor((availableWidth - gap * (visible - 1)) / visible)));
+        row.style.gap = `${gap}px`;
+        stage.style.setProperty("--ball-size", `${ballSize}px`);
+        stage.style.setProperty("--crown-delay", `${.52 + visible * .13 + .2}s`);
+        stage.style.setProperty("--finish-delay", `${.52 + visible * .13 + .52}s`);
+
+        for (let index = 0; index < visible; index += 1) {
+          const slot = document.createElement("span");
+          slot.className = `ball-slot${index === visible - 1 ? " winner-ball" : ""}`;
+          slot.style.animationDelay = `${.52 + index * .13}s`;
+          const color = index === visible - 1 ? "#f3c552" : colors[index % colors.length];
+          slot.style.setProperty("--ball-color", color);
+          const ball = document.createElement("span");
+          ball.className = `ball${index !== visible - 1 && stripedBalls.has(index % colors.length) ? " striped" : ""}`;
+          slot.appendChild(ball);
+          if (index === visible - 1) {
+            const crown = document.createElement("i");
+            crown.className = "pixel-crown";
+            crown.style.width = `${Math.max(20, Math.round(ballSize * .82))}px`;
+            crown.style.height = `${Math.max(17, Math.round(ballSize * .66))}px`;
+            crown.style.top = `${-Math.max(19, Math.round(ballSize * .72))}px`;
+            slot.appendChild(crown);
+          }
+          row.appendChild(slot);
+        }
+      }
+
+      function replay() {
+        const current = document.querySelector("[data-stage]");
+        const replacement = current.cloneNode(true);
+        current.replaceWith(replacement);
+        populate(replacement);
+      }
+
+      document.querySelector("[data-replay]").addEventListener("click", replay);
+      populate(document.querySelector("[data-stage]"));
+    </script>
+  </body>
+</html>

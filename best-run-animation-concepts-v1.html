@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071014" />
+    <title>Best Run Animation Concepts V1</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071014;
+        --panel: #0b1b21;
+        --panel-2: #102b32;
+        --line: #28525a;
+        --cream: #fff1c9;
+        --muted: #91a9ad;
+        --coral: #ff6b4f;
+        --red: #8e211d;
+        --cyan: #63edf0;
+        --gold: #f3c552;
+        --shadow: #020709;
+        --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+        --body: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { width: 100%; min-height: 100%; margin: 0; overflow-x: hidden; }
+      body {
+        display: grid;
+        place-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+        color: var(--cream);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.014) 3px 4px),
+          radial-gradient(circle at 14% 4%, rgba(99,237,240,.14), transparent 30%),
+          radial-gradient(circle at 88% 16%, rgba(255,107,79,.14), transparent 28%),
+          var(--bg);
+        font-family: var(--body);
+      }
+      main { width: min(100%, 620px); }
+      header { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+      .kicker { margin: 0 0 4px; color: var(--coral); font: 400 .72rem/1 var(--display); letter-spacing: .15em; text-transform: uppercase; }
+      h1 { margin: 0; font: 400 1.75rem/1 var(--display); letter-spacing: .04em; text-shadow: 3px 3px 0 var(--red); }
+      .replay { border: 0; padding: 7px 0; color: var(--cyan); background: transparent; font: 700 .8rem var(--body); cursor: pointer; }
+      .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+      .choice {
+        min-height: 43px;
+        padding: 7px 5px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        color: var(--muted);
+        background: rgba(11,27,33,.94);
+        font: 700 .69rem/1.15 var(--body);
+        cursor: pointer;
+      }
+      .choice[aria-pressed="true"] { color: var(--bg); border-color: var(--cyan); background: var(--cyan); }
+      .frame { overflow: hidden; border: 2px solid var(--line); background: var(--panel); box-shadow: 7px 7px 0 var(--shadow); }
+      .frame-label { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.1); color: var(--coral); font: 400 .75rem var(--display); letter-spacing: .13em; text-transform: uppercase; }
+      .stage { position: relative; width: 100%; aspect-ratio: 360 / 310; overflow: hidden; background: linear-gradient(180deg, #09191e, #061014 82%); }
+      .pane { display: none; position: absolute; inset: 0; }
+      .pane.active { display: block; }
+      .display { font-family: var(--display); text-transform: uppercase; }
+
+      /* Neon high score */
+      .neon-wall { position: absolute; inset: 22px 25px 28px; border: 4px solid #855038; background: linear-gradient(180deg,#111a20,#071014); box-shadow: 6px 7px 0 var(--shadow), inset 0 0 32px rgba(99,237,240,.05); }
+      .neon-wire { position: absolute; left: 50%; top: 0; width: 2px; height: 38px; background: #354b50; }
+      .neon-sign { position: absolute; inset: 61px 43px 48px; display: grid; place-items: center; text-align: center; }
+      .neon-copy { opacity: 0; animation: neon-on .86s .42s steps(1,end) forwards; }
+      .neon-copy small { display: block; margin-bottom: 5px; color: var(--coral); font: 400 1.2rem var(--display); letter-spacing: .18em; text-shadow: 0 0 7px rgba(255,107,79,.85); }
+      .neon-number { color: transparent; font: 900 6rem/1 "Arial Rounded MT Bold", Arial, sans-serif; -webkit-text-stroke: 3px var(--cyan); filter: drop-shadow(0 0 8px rgba(99,237,240,.9)); }
+      .neon-player { margin-top: 3px; color: var(--cream); font: 400 1.35rem var(--display); letter-spacing: .14em; text-shadow: 3px 3px 0 var(--red); }
+      .neon-spark { position: absolute; color: var(--gold); opacity: 0; animation: spark-pop .65s ease-out forwards; }
+      .neon-spark.s1 { left: 74px; top: 101px; animation-delay: 1.58s; }
+      .neon-spark.s2 { right: 71px; top: 144px; animation-delay: 1.72s; }
+      .neon-spark.s3 { left: 101px; bottom: 58px; animation-delay: 1.84s; }
+
+      /* Ball parade */
+      .parade-floor { position: absolute; left: 20px; right: 20px; bottom: 78px; height: 5px; border-radius: 50%; background: #21454d; box-shadow: 0 5px 0 var(--shadow); }
+      .parade-row { position: absolute; left: 20px; right: 20px; bottom: 82px; display: flex; justify-content: center; align-items: end; gap: 6px; }
+      .parade-ball {
+        position: relative;
+        flex: 0 0 clamp(25px, 8vw, 39px);
+        width: clamp(25px, 8vw, 39px);
+        aspect-ratio: 1;
+        border: 3px solid #071014;
+        border-radius: 50%;
+        box-shadow: 4px 5px 0 rgba(0,0,0,.5);
+        opacity: 0;
+        transform: translateX(-240px) rotate(-420deg);
+        animation: ball-roll .62s cubic-bezier(.2,.78,.24,1.08) forwards;
+      }
+      .parade-ball::before { content: ""; position: absolute; left: 20%; top: 15%; width: 24%; height: 13%; border-radius: 50%; background: rgba(255,255,255,.65); transform: rotate(-28deg); }
+      .parade-ball:nth-child(4n+1) { background: var(--coral); }
+      .parade-ball:nth-child(4n+2) { background: var(--cyan); }
+      .parade-ball:nth-child(4n+3) { background: var(--gold); }
+      .parade-ball:nth-child(4n) { background: var(--cream); }
+      .parade-heading { position: absolute; top: 37px; left: 0; right: 0; text-align: center; opacity: 0; animation: copy-pop .48s .25s ease-out forwards; }
+      .parade-heading strong { display: block; color: var(--cream); font: 400 2.15rem/1 var(--display); letter-spacing: .08em; text-shadow: 3px 3px 0 var(--red); }
+      .parade-heading span { display: block; margin-top: 9px; color: var(--cyan); font: 900 3.7rem/1 "Arial Rounded MT Bold", Arial, sans-serif; text-shadow: 0 0 10px rgba(99,237,240,.52); }
+      .parade-footer { position: absolute; left: 0; right: 0; bottom: 29px; color: var(--muted); text-align: center; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; opacity: 0; animation: copy-pop .42s 1.7s ease-out forwards; }
+      .parade-crown { position: absolute; right: 35px; bottom: 112px; color: var(--gold); font-size: 1.55rem; opacity: 0; transform: translateY(-22px) rotate(12deg); animation: crown-drop .55s 1.55s cubic-bezier(.2,.8,.2,1.2) forwards; }
+
+      /* Chalk tally */
+      .chalk-board { position: absolute; inset: 24px 24px 30px; border: 7px solid #855038; outline: 2px solid #3d241b; background: radial-gradient(circle at 45% 35%,#183b3a,#0f292b 70%); box-shadow: 7px 8px 0 var(--shadow), inset 0 0 26px rgba(0,0,0,.25); }
+      .chalk-title { position: absolute; top: 45px; left: 0; right: 0; text-align: center; }
+      .chalk-title strong { color: var(--cream); font: 400 2rem/1 var(--display); letter-spacing: .09em; text-shadow: 2px 3px 0 var(--red); }
+      .chalk-title span { display: block; margin-top: 5px; color: var(--coral); font: 700 .76rem var(--body); letter-spacing: .17em; text-transform: uppercase; }
+      .tally-svg { position: absolute; left: 50%; top: 112px; width: 245px; height: 97px; transform: translateX(-50%); overflow: visible; }
+      .tally-line { fill: none; stroke: var(--cream); stroke-width: 7; stroke-linecap: round; filter: url(#chalk-wobble); stroke-dasharray: 80; stroke-dashoffset: 80; animation: draw-tally .34s ease-out forwards; }
+      .chalk-result { position: absolute; left: 0; right: 0; bottom: 47px; display: flex; align-items: baseline; justify-content: center; gap: 10px; opacity: 0; animation: copy-pop .5s 1.72s ease-out forwards; }
+      .chalk-result b { color: var(--cyan); font: 900 3.15rem/1 "Marker Felt", "Chalkboard SE", sans-serif; }
+      .chalk-result span { color: var(--cream); font: 400 1.2rem var(--display); letter-spacing: .08em; text-transform: uppercase; }
+
+      @keyframes neon-on {
+        0%, 18%, 37%, 57% { opacity: .08; }
+        19%, 36%, 58%, 100% { opacity: 1; }
+      }
+      @keyframes spark-pop {
+        0% { opacity: 0; transform: scale(.2) rotate(0); }
+        45% { opacity: 1; }
+        100% { opacity: 0; transform: scale(1.7) rotate(45deg); }
+      }
+      @keyframes ball-roll {
+        0% { opacity: 0; transform: translateX(-240px) rotate(-420deg); }
+        70% { opacity: 1; transform: translateX(4px) rotate(8deg); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes copy-pop {
+        0% { opacity: 0; transform: translateY(8px) scale(.92); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes crown-drop {
+        0% { opacity: 0; transform: translateY(-22px) rotate(12deg); }
+        100% { opacity: 1; transform: rotate(-8deg); }
+      }
+      @keyframes draw-tally { to { stroke-dashoffset: 0; } }
+      @media (max-width: 430px) {
+        .choice { font-size: .62rem; }
+        .neon-number { font-size: 5rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: .001ms !important; animation-delay: 0s !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="kicker">Best-run animation concepts</p>
+          <h1>New Personal Best</h1>
+        </div>
+        <button class="replay" type="button" data-replay>↻ Replay</button>
+      </header>
+
+      <div class="choices" role="group" aria-label="Choose a best-run animation">
+        <button class="choice" type="button" data-choice="neon" aria-pressed="true">Neon high score</button>
+        <button class="choice" type="button" data-choice="parade" aria-pressed="false">Ball parade</button>
+        <button class="choice" type="button" data-choice="chalk" aria-pressed="false">Chalk tally</button>
+      </div>
+
+      <section class="frame">
+        <div class="frame-label" data-label>Neon high score</div>
+        <div class="stage" data-stage>
+          <div class="pane active" data-pane="neon">
+            <div class="neon-wire"></div>
+            <div class="neon-wall"></div>
+            <div class="neon-sign">
+              <div class="neon-copy">
+                <small>NEW BEST RUN</small>
+                <div class="neon-number" data-neon-number>7</div>
+                <div class="neon-player" data-player>VANESSA</div>
+              </div>
+            </div>
+            <span class="neon-spark s1">✦</span><span class="neon-spark s2">✦</span><span class="neon-spark s3">✦</span>
+          </div>
+
+          <div class="pane" data-pane="parade">
+            <div class="parade-heading"><strong>BALL PARADE</strong><span><span data-parade-count>7</span> IN A ROW</span></div>
+            <div class="parade-row" data-parade-row></div>
+            <div class="parade-floor"></div>
+            <div class="parade-crown">♛</div>
+            <div class="parade-footer"><span data-parade-player>Vanessa</span> set a new best run</div>
+          </div>
+
+          <div class="pane" data-pane="chalk">
+            <div class="chalk-board"></div>
+            <div class="chalk-title"><strong>NEW BEST RUN</strong><span data-chalk-player>Vanessa</span></div>
+            <svg class="tally-svg" viewBox="0 0 245 97" aria-label="Seven chalk tally marks" data-tally-svg>
+              <defs><filter id="chalk-wobble" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".025 .08" numOctaves="1" seed="7" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="1.3"/></filter></defs>
+              <g data-tallies></g>
+            </svg>
+            <div class="chalk-result"><b data-chalk-count>7</b><span>balls in a row</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(location.search);
+      const player = params.get("player") || "Vanessa";
+      const run = Math.max(1, Math.min(15, Number.parseInt(params.get("run"), 10) || 7));
+      const labels = { neon: "Neon high score", parade: "Ball parade", chalk: "Chalk tally" };
+      let active = "neon";
+
+      function buildParade(root) {
+        const row = root.querySelector("[data-parade-row]");
+        row.innerHTML = "";
+        const visible = Math.min(run, 10);
+        for (let index = 0; index < visible; index += 1) {
+          const ball = document.createElement("span");
+          ball.className = "parade-ball";
+          ball.style.animationDelay = `${0.42 + index * 0.12}s`;
+          row.appendChild(ball);
+        }
+      }
+
+      function buildTallies(root) {
+        const group = root.querySelector("[data-tallies]");
+        group.innerHTML = "";
+        let markIndex = 0;
+        for (let value = 0; value < run; value += 1) {
+          const groupIndex = Math.floor(value / 5);
+          const inside = value % 5;
+          const xBase = 18 + groupIndex * 93;
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          if (inside < 4) line.setAttribute("d", `M${xBase + inside * 15} 15 L${xBase + inside * 15 - 5} 76`);
+          else line.setAttribute("d", `M${xBase - 9} 65 L${xBase + 50} 23`);
+          line.setAttribute("class", "tally-line");
+          line.style.animationDelay = `${0.42 + markIndex * 0.15}s`;
+          group.appendChild(line);
+          markIndex += 1;
+        }
+      }
+
+      function populate(stage) {
+        stage.querySelector("[data-neon-number]").textContent = run;
+        stage.querySelector("[data-player]").textContent = player.toUpperCase();
+        stage.querySelector("[data-parade-count]").textContent = run;
+        stage.querySelector("[data-parade-player]").textContent = player;
+        stage.querySelector("[data-chalk-player]").textContent = player;
+        stage.querySelector("[data-chalk-count]").textContent = run;
+        buildParade(stage);
+        buildTallies(stage);
+      }
+
+      function select(name) {
+        active = name;
+        document.querySelectorAll("[data-choice]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.choice === name)));
+        document.querySelector("[data-label]").textContent = labels[name];
+        document.querySelectorAll("[data-pane]").forEach((pane) => pane.classList.toggle("active", pane.dataset.pane === name));
+        replay();
+      }
+
+      function replay() {
+        const current = document.querySelector("[data-stage]");
+        const replacement = current.cloneNode(true);
+        current.replaceWith(replacement);
+        populate(replacement);
+        replacement.querySelectorAll("[data-pane]").forEach((pane) => pane.classList.toggle("active", pane.dataset.pane === active));
+      }
+
+      document.querySelectorAll("[data-choice]").forEach((button) => button.addEventListener("click", () => select(button.dataset.choice)));
+      document.querySelector("[data-replay]").addEventListener("click", replay);
+      populate(document.querySelector("[data-stage]"));
+    </script>
+  </body>
+</html>

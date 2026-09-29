@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071014" />
+    <title>Table Light · Series Win V2</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071014;
+        --panel: #0b1b21;
+        --line: #28525a;
+        --cream: #fff1c9;
+        --muted: #91a9ad;
+        --coral: #ff6b4f;
+        --red: #8e211d;
+        --cyan: #63edf0;
+        --wine: #4a202b;
+        --wood: #855038;
+        --shadow: #020709;
+        --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+        --body: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { min-height: 100%; margin: 0; overflow-x: hidden; }
+      body {
+        display: grid;
+        place-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+        color: var(--cream);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.014) 3px 4px),
+          radial-gradient(circle at 16% 4%, rgba(99,237,240,.14), transparent 30%),
+          radial-gradient(circle at 86% 15%, rgba(255,107,79,.14), transparent 28%),
+          var(--bg);
+        font-family: var(--body);
+      }
+
+      main { width: min(100%, 620px); }
+      header { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+      .kicker { margin: 0 0 4px; color: var(--coral); font: 400 .72rem/1 var(--display); letter-spacing: .15em; text-transform: uppercase; }
+      h1 { margin: 0; color: var(--cream); font: 400 1.75rem/1 var(--display); letter-spacing: .04em; text-shadow: 3px 3px 0 var(--red); }
+      .replay { border: 0; padding: 7px 0; color: var(--cyan); background: transparent; font: 700 .8rem var(--body); cursor: pointer; }
+      .stage {
+        width: 100%;
+        aspect-ratio: 360 / 310;
+        overflow: hidden;
+        border: 2px solid var(--line);
+        background: linear-gradient(180deg, #09191e, #061014 82%);
+        box-shadow: 7px 7px 0 var(--shadow);
+      }
+      svg { display: block; width: 100%; height: 100%; }
+
+      .fixture { transform-origin: 180px 0; animation: lamp-drop .85s cubic-bezier(.2,.8,.2,1.15) both; }
+      .beam { opacity: 0; animation: light-flicker .9s .7s steps(1,end) forwards; }
+      .table { opacity: .25; animation: table-lit .45s 1.05s ease-out forwards; }
+      .champion-copy { opacity: 0; transform-origin: 180px 150px; animation: champion-in .58s 1.23s cubic-bezier(.2,.85,.2,1.16) forwards; }
+      .score-copy { opacity: 0; transform-origin: 180px 247px; animation: score-pop .56s 1.62s cubic-bezier(.18,.82,.22,1.24) forwards; }
+      .dust { opacity: 0; animation: dust 1.3s ease-out forwards; }
+      .dust.d1 { animation-delay: 1.05s; }
+      .dust.d2 { animation-delay: 1.18s; }
+      .dust.d3 { animation-delay: 1.3s; }
+
+      .champion-title {
+        fill: rgba(99,237,240,.08);
+        stroke: var(--cyan);
+        stroke-width: 1.25px;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 0 4px rgba(99,237,240,.82));
+        font: 700 28px "Arial Rounded MT Bold", Arial, sans-serif;
+        letter-spacing: 1px;
+        text-anchor: middle;
+      }
+      .winner-shadow {
+        fill: var(--red);
+        font: 900 25px "Cooper Black", Georgia, serif;
+        letter-spacing: 2px;
+        text-anchor: middle;
+      }
+      .winner-name {
+        fill: var(--cream);
+        stroke: var(--coral);
+        stroke-width: .3px;
+        paint-order: stroke fill;
+        font: 900 25px "Cooper Black", Georgia, serif;
+        letter-spacing: 2px;
+        text-anchor: middle;
+      }
+      .score-shadow {
+        fill: var(--shadow);
+        opacity: .72;
+        font: 900 44px "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+        letter-spacing: 4px;
+        text-anchor: middle;
+      }
+      .score-main {
+        fill: rgba(99,237,240,.16);
+        stroke: var(--cyan);
+        stroke-width: 2px;
+        paint-order: stroke fill;
+        filter: drop-shadow(0 0 5px rgba(99,237,240,.68));
+        font: 900 44px "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+        letter-spacing: 4px;
+        text-anchor: middle;
+      }
+      .score-glint { fill: var(--cream); opacity: .86; }
+
+      @keyframes lamp-drop {
+        0% { opacity: 0; transform: translateY(-90px) rotate(-7deg); }
+        68% { opacity: 1; transform: translateY(5px) rotate(2deg); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes light-flicker {
+        0%, 18%, 42% { opacity: 0; }
+        19%, 41% { opacity: .35; }
+        43%, 100% { opacity: 1; }
+      }
+      @keyframes table-lit { to { opacity: 1; } }
+      @keyframes champion-in {
+        0% { opacity: 0; transform: translateY(8px) scale(.9); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes score-pop {
+        0% { opacity: 0; transform: scale(.45); }
+        65% { opacity: 1; transform: scale(1.09); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes dust {
+        0% { opacity: 0; transform: translateY(6px); }
+        35% { opacity: .85; }
+        100% { opacity: 0; transform: translateY(-34px); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: .001ms !important; animation-delay: 0s !important; }
+      }
+      html.embed, .embed body { height: 100%; }
+      .embed body { min-height: 100%; padding: 0; background: #071014; color-scheme: dark; }
+      .embed main { width: min(100%, 402px); }
+      .embed header { display: none; }
+      .embed .stage { border: 0; box-shadow: none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="kicker">Series win concept · V2</p>
+          <h1>Overhead Table Light</h1>
+        </div>
+        <button class="replay" type="button" data-replay>↻ Replay</button>
+      </header>
+
+      <div class="stage" data-stage>
+        <svg viewBox="0 0 360 310" role="img" aria-label="A teal billiards lamp reveals the series champion above a wine-colored pool table, with the final score on the felt">
+          <defs>
+            <linearGradient id="v2-beam" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff1c9" stop-opacity=".38" />
+              <stop offset="1" stop-color="#f3c552" stop-opacity=".04" />
+            </linearGradient>
+            <linearGradient id="v2-shade" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#2b7c79" />
+              <stop offset=".58" stop-color="#174c52" />
+              <stop offset="1" stop-color="#102b32" />
+            </linearGradient>
+            <radialGradient id="v2-felt" cx="50%" cy="35%" r="75%">
+              <stop stop-color="#633040" />
+              <stop offset="1" stop-color="#301720" />
+            </radialGradient>
+          </defs>
+
+          <g class="beam"><path d="M111 87h138l77 207H34Z" fill="url(#v2-beam)" /></g>
+          <g class="fixture">
+            <path d="M180 0v44" stroke="#49636a" stroke-width="4" />
+            <rect x="165" y="37" width="30" height="13" rx="3" fill="#8e211d" stroke="#421715" stroke-width="3" />
+            <path d="M132 47h96l28 40H104Z" fill="url(#v2-shade)" stroke="#ff6b4f" stroke-width="4" stroke-linejoin="round" />
+            <path d="M111 87h138" stroke="#63edf0" stroke-width="5" />
+            <path d="M121 82h118" stroke="#fff1c9" stroke-width="2" opacity=".65" />
+          </g>
+
+          <g class="champion-copy">
+            <text class="champion-title" x="180" y="135">SERIES CHAMPION</text>
+            <text class="winner-shadow" x="182" y="169" data-winner-shadow>VANESSA</text>
+            <text class="winner-name" x="180" y="167" data-winner>VANESSA</text>
+          </g>
+
+          <g class="table">
+            <rect x="31" y="190" width="298" height="103" rx="8" fill="#855038" stroke="#3d241b" stroke-width="5" />
+            <rect x="37" y="196" width="286" height="91" rx="4" fill="#ff6b4f" opacity=".28" />
+            <rect x="43" y="202" width="274" height="79" rx="2" fill="url(#v2-felt)" stroke="#8e211d" stroke-width="4" />
+            <circle cx="43" cy="203" r="8" fill="#020709" /><circle cx="180" cy="202" r="7" fill="#020709" /><circle cx="317" cy="203" r="8" fill="#020709" />
+            <circle cx="43" cy="280" r="8" fill="#020709" /><circle cx="180" cy="281" r="7" fill="#020709" /><circle cx="317" cy="280" r="8" fill="#020709" />
+          </g>
+
+          <g class="score-copy">
+            <text class="score-shadow" x="183" y="258" data-score-shadow>10 — 7</text>
+            <text class="score-main" x="180" y="255" data-score>10 — 7</text>
+            <circle class="score-glint" cx="142" cy="226" r="2" />
+            <circle class="score-glint" cx="216" cy="228" r="1.5" />
+          </g>
+
+          <g fill="#fff1c9"><circle class="dust d1" cx="93" cy="165" r="2" /><circle class="dust d2" cx="267" cy="177" r="2" /><circle class="dust d3" cx="219" cy="145" r="1.5" /></g>
+        </svg>
+      </div>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(location.search);
+      if (params.has("embed")) document.documentElement.classList.add("embed");
+      const winner = (params.get("winner") || "Vanessa").toUpperCase();
+      const vanessaScore = params.get("vanessaScore") || "10";
+      const carlScore = params.get("carlScore") || "7";
+
+      function populate(stage) {
+        stage.querySelector("[data-winner]").textContent = winner;
+        stage.querySelector("[data-winner-shadow]").textContent = winner;
+        stage.querySelector("[data-score]").textContent = `${vanessaScore} — ${carlScore}`;
+        stage.querySelector("[data-score-shadow]").textContent = `${vanessaScore} — ${carlScore}`;
+      }
+
+      function replay() {
+        const current = document.querySelector("[data-stage]");
+        const replacement = current.cloneNode(true);
+        current.replaceWith(replacement);
+        populate(replacement);
+      }
+
+      document.querySelector("[data-replay]").addEventListener("click", replay);
+      populate(document.querySelector("[data-stage]"));
+    </script>
+  </body>
+</html>

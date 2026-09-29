@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Victory Cheers · Series Win</title>
+  <style>
+    :root{--bg:#071014;--panel:#0b1b21;--line:#28525a;--cream:#fff1c9;--muted:#91a9ad;--coral:#ff6b4f;--cyan:#63edf0;--shadow:#020709;--display:Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;--body:"Avenir Next",Avenir,sans-serif}
+    *{box-sizing:border-box}body{min-height:100vh;margin:0;display:grid;place-items:center;padding:24px 14px;overflow-x:hidden;color:var(--cream);font-family:var(--body);background:radial-gradient(circle at 12% 0,rgba(39,104,112,.35),transparent 30%),radial-gradient(circle at 90% 18%,rgba(142,33,29,.31),transparent 30%),var(--bg)}main{width:min(100%,402px)}header{margin-bottom:14px}.eyebrow{margin:0 0 5px;color:var(--coral);font:400 .76rem var(--display);letter-spacing:.16em;text-transform:uppercase}h1{margin:0;font:400 2rem/1 var(--display);letter-spacing:.045em;text-shadow:3px 3px 0 #8e211d}.demo-card{overflow:hidden;border:2px solid var(--line);background:var(--panel);box-shadow:7px 7px 0 var(--shadow)}.demo-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.1)}.demo-head span{min-width:0;color:var(--muted);font-size:.72rem}.replay{flex:none;border:1px solid var(--line);border-radius:2px;padding:6px 9px;color:var(--cyan);background:transparent;font:700 .68rem var(--body);cursor:pointer}.stage-shell{height:338px;overflow:hidden}.stage-frame{display:block;width:100%;height:338px;border:0;background:transparent}
+    html.embed,.embed body{min-height:100%;background:#071014;color-scheme:dark}.embed body{padding:0}.embed header,.embed .demo-head{display:none}.embed .demo-card{border:0;box-shadow:none}.embed main{width:100%}.embed .stage-frame{background:#071014;color-scheme:dark}
+  </style>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">Official series win animation</p><h1>Victory cheers</h1></header>
+    <section class="demo-card">
+      <div class="demo-head"><span>Foamy scores + delayed winner reveal</span><button class="replay" type="button">Replay</button></div>
+      <div class="stage-shell"><iframe class="stage-frame" title="Victory Cheers with delayed winner reveal"></iframe></div>
+    </section>
+  </main>
+  <script>
+    const frame=document.querySelector('.stage-frame');
+    const source=new URL('./series-win-victory-cheers-base.html',location.href);
+    const params=new URLSearchParams(location.search);
+    if(params.has('embed'))document.documentElement.classList.add('embed');
+    source.search=params;
+    source.searchParams.set('embed','1');
+    frame.src=source;
+    frame.addEventListener('load',()=>{
+      const doc=frame.contentDocument;
+      if(!doc)return;
+      const style=doc.createElement('style');
+      style.dataset.victoryCheersV7='true';
+      style.textContent=`
+        .score{
+          top:46px!important;
+          color:#fffaf0!important;
+          font-family:"Marker Felt","Chalkboard SE","Arial Rounded MT Bold",sans-serif!important;
+          font-size:2.2rem!important;
+          font-weight:900!important;
+          letter-spacing:.02em!important;
+          -webkit-text-stroke:1.5px #fffaf0!important;
+          text-shadow:none!important;
+          filter:url(#gentle-wobble);
+        }
+        .winner-name{
+          opacity:0;
+          animation:winner-name-pop .48s 1.58s cubic-bezier(.18,.82,.22,1.24) both;
+        }
+        .final-score{display:none!important}
+        .stage{height:338px!important}
+        @keyframes winner-name-pop{
+          0%{opacity:0;transform:translateY(-5px) scale(.78)}
+          68%{opacity:1;transform:translateY(1px) scale(1.08)}
+          100%{opacity:1;transform:none}
+        }
+      `;
+      doc.head.appendChild(style);
+    });
+    document.querySelector('.replay').addEventListener('click',()=>frame.contentWindow.location.reload());
+  </script>
+</body>
+</html>

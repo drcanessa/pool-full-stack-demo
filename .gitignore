@@ -1,0 +1,9 @@
+.DS_Store
+.tools/
+.venv/
+.vercel/
+supabase/
+node_modules/
+.env
+.env.*
+!.env.example

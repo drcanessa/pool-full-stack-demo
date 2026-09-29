@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071014" />
+    <title>Ball Parade · Best Run V2</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071014;
+        --panel: #0b1b21;
+        --line: #28525a;
+        --cream: #fff1c9;
+        --muted: #91a9ad;
+        --coral: #ff6b4f;
+        --red: #8e211d;
+        --cyan: #63edf0;
+        --gold: #f3c552;
+        --shadow: #020709;
+        --display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+        --body: "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --pixel: Monaco, Menlo, "Courier New", monospace;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { width: 100%; min-height: 100%; margin: 0; overflow-x: hidden; }
+      body {
+        display: grid;
+        place-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+        color: var(--cream);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.014) 3px 4px),
+          radial-gradient(circle at 14% 4%, rgba(99,237,240,.14), transparent 30%),
+          radial-gradient(circle at 88% 16%, rgba(255,107,79,.14), transparent 28%),
+          var(--bg);
+        font-family: var(--body);
+      }
+      main { width: min(100%, 620px); }
+      header { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+      .kicker { margin: 0 0 4px; color: var(--coral); font: 900 .65rem/1 var(--pixel); letter-spacing: .08em; text-transform: uppercase; }
+      h1 { margin: 0; font: 900 1.55rem/1 var(--pixel); letter-spacing: -.06em; text-transform: uppercase; text-shadow: 3px 3px 0 var(--red); }
+      .replay { border: 0; padding: 7px 0; color: var(--cyan); background: transparent; font: 700 .8rem var(--body); cursor: pointer; }
+      .frame { overflow: hidden; border: 2px solid var(--line); background: var(--panel); box-shadow: 7px 7px 0 var(--shadow); }
+      .frame-label { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.1); color: var(--coral); font: 900 .65rem var(--pixel); letter-spacing: .08em; text-transform: uppercase; }
+      .stage { position: relative; width: 100%; aspect-ratio: 360 / 310; overflow: hidden; isolation: isolate; background: linear-gradient(180deg, #09191e, #061014 82%); }
+      .pixel-grid { position: absolute; inset: 0; opacity: .15; background-image: linear-gradient(rgba(99,237,240,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(99,237,240,.15) 1px,transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(to bottom,black,transparent 78%); }
+      .corner { position: absolute; width: 14px; height: 14px; border-color: var(--cyan); opacity: .7; }
+      .corner.tl { left: 18px; top: 18px; border-left: 3px solid; border-top: 3px solid; }
+      .corner.tr { right: 18px; top: 18px; border-right: 3px solid; border-top: 3px solid; }
+      .corner.bl { left: 18px; bottom: 18px; border-left: 3px solid; border-bottom: 3px solid; }
+      .corner.br { right: 18px; bottom: 18px; border-right: 3px solid; border-bottom: 3px solid; }
+
+      .headline { position: absolute; z-index: 4; left: 22px; right: 22px; top: 31px; text-align: center; opacity: 0; animation: pixel-title .5s .18s steps(5,end) forwards; }
+      .headline strong { display: block; color: var(--cream); font: 900 clamp(1.15rem,5vw,1.8rem)/1.25 var(--pixel); letter-spacing: -.08em; text-transform: uppercase; text-shadow: 3px 0 0 var(--red),0 3px 0 var(--red); }
+      .headline small { display: inline-block; margin-top: 9px; padding: 5px 8px 4px; color: var(--bg); background: var(--coral); box-shadow: 3px 3px 0 var(--red); font: 900 .63rem var(--pixel); letter-spacing: .03em; text-transform: uppercase; }
+
+      .score-lockup { position: absolute; z-index: 4; left: 0; right: 0; top: 103px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; opacity: 0; animation: pixel-pop .48s .48s steps(4,end) forwards; }
+      .run-number { color: var(--cyan); font: 900 clamp(3.35rem,12vw,4.8rem)/.8 var(--pixel); letter-spacing: -.14em; text-shadow: 4px 0 0 #12535a,0 4px 0 #12535a,0 0 11px rgba(99,237,240,.5); }
+      .run-label { color: var(--cream); font: 900 clamp(.68rem,2.4vw,.9rem)/1.2 var(--pixel); letter-spacing: -.05em; text-align: center; text-transform: uppercase; }
+      .run-label em { display: inline; color: var(--gold); font-style: normal; }
+
+      .rail { position: absolute; z-index: 2; left: 20px; right: 20px; bottom: 77px; height: 32px; border: 5px solid #3d241b; border-radius: 4px; background: linear-gradient(#a35f42,#6c382a); box-shadow: 0 7px 0 var(--shadow); }
+      .rail::before { content: ""; position: absolute; left: 7px; right: 7px; top: 4px; height: 3px; background: rgba(255,241,201,.34); }
+      .felt-strip { position: absolute; z-index: 1; left: 25px; right: 25px; bottom: 104px; height: 42px; border: 3px solid #173a3f; border-bottom: 0; background: linear-gradient(#17534f,#0f3b3b); }
+      .ball-row { position: absolute; z-index: 5; left: 26px; right: 26px; bottom: 104px; display: flex; align-items: end; justify-content: center; gap: clamp(2px,1vw,6px); }
+      .ball-slot { flex: 0 0 var(--ball-size); width: var(--ball-size); aspect-ratio: 1; opacity: 0; transform: translate(-230px,-24px) rotate(-360deg); animation: parade-in .6s cubic-bezier(.18,.76,.22,1.12) forwards; }
+      .ball {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border: 3px solid var(--shadow);
+        border-radius: 50%;
+        background: var(--ball-color);
+        box-shadow: 3px 4px 0 rgba(0,0,0,.55), inset -5px -4px 0 rgba(0,0,0,.13);
+      }
+      .ball.striped::after { content: ""; position: absolute; left: -10%; right: -10%; top: 29%; height: 42%; background: var(--ball-color); }
+      .ball.striped { background: var(--cream); }
+      .ball::before { content: ""; position: absolute; z-index: 3; left: 18%; top: 12%; width: 27%; height: 14%; border-radius: 50%; background: rgba(255,255,255,.72); transform: rotate(-27deg); }
+      .ball-number { position: relative; z-index: 4; display: grid; place-items: center; width: 47%; height: 47%; border-radius: 50%; color: var(--shadow); background: var(--cream); font: 900 clamp(.46rem,1.7vw,.68rem)/1 var(--pixel); }
+      .winner-ball { filter: drop-shadow(0 0 7px rgba(243,197,82,.75)); }
+      .winner-ball .ball { border-color: var(--gold); }
+      .pixel-crown { position: absolute; z-index: 7; width: 34px; height: 27px; opacity: 0; transform: translateY(-25px); animation: crown-land .52s var(--crown-delay) steps(5,end) forwards; }
+      .pixel-crown::before { content: ""; position: absolute; inset: 8px 2px 2px; background: var(--gold); box-shadow: 0 4px 0 #b86d22; clip-path: polygon(0 0,23% 35%,42% 0,62% 35%,86% 0,100% 100%,0 100%); }
+      .pixel-crown::after { content: ""; position: absolute; left: 7px; right: 7px; bottom: 0; height: 4px; background: var(--cream); }
+
+      .winner-banner { position: absolute; z-index: 6; left: 50%; bottom: 24px; width: min(76%,330px); padding: 8px 12px 7px; color: var(--cream); background: var(--red); text-align: center; text-transform: uppercase; transform: translate(-50%,22px); opacity: 0; clip-path: polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px),0 6px); box-shadow: inset 0 0 0 3px var(--coral); animation: banner-in .5s var(--finish-delay) steps(5,end) forwards; }
+      .winner-banner b { font: 900 .78rem var(--pixel); letter-spacing: -.04em; }
+      .winner-banner span { color: var(--cyan); }
+      .spark { position: absolute; z-index: 7; width: 8px; height: 8px; background: var(--cream); opacity: 0; animation: sparkle .6s var(--finish-delay) steps(4,end) forwards; }
+      .spark.s1 { left: 61px; bottom: 48px; }
+      .spark.s2 { right: 58px; bottom: 56px; background: var(--cyan); animation-delay: calc(var(--finish-delay) + .12s); }
+      .spark.s3 { right: 105px; bottom: 145px; background: var(--gold); animation-delay: calc(var(--finish-delay) + .2s); }
+
+      @keyframes pixel-title {
+        0% { opacity: 0; transform: translateY(-10px); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes pixel-pop {
+        0% { opacity: 0; transform: scale(.65); }
+        75% { opacity: 1; transform: scale(1.08); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes parade-in {
+        0% { opacity: 0; transform: translate(-230px,-24px) rotate(-360deg); }
+        66% { opacity: 1; transform: translate(5px,-8px) rotate(14deg); }
+        82% { opacity: 1; transform: translate(-2px,2px) rotate(-5deg); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes crown-land {
+        0% { opacity: 0; transform: translateY(-25px); }
+        76% { opacity: 1; transform: translateY(3px); }
+        100% { opacity: 1; transform: none; }
+      }
+      @keyframes banner-in {
+        0% { opacity: 0; transform: translate(-50%,22px); }
+        100% { opacity: 1; transform: translate(-50%,0); }
+      }
+      @keyframes sparkle {
+        0% { opacity: 0; transform: scale(.2) rotate(0); clip-path: polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%); }
+        48% { opacity: 1; }
+        100% { opacity: 0; transform: scale(2) rotate(45deg); clip-path: polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%); }
+      }
+      @media (max-width: 430px) {
+        .headline { top: 28px; }
+        .score-lockup { top: 102px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: .001ms !important; animation-delay: 0s !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="kicker">Best-run animation · V2</p>
+          <h1>Ball Parade</h1>
+        </div>
+        <button class="replay" type="button" data-replay>↻ Replay</button>
+      </header>
+
+      <section class="frame">
+        <div class="frame-label">High-score parade</div>
+        <div class="stage" data-stage>
+          <div class="pixel-grid"></div>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="headline"><strong>New Best Run!</strong><small>High score unlocked</small></div>
+          <div class="score-lockup"><b class="run-number" data-run>7</b><div class="run-label"><em>Balls sunk</em> in a row</div></div>
+          <div class="felt-strip"></div>
+          <div class="ball-row" data-ball-row></div>
+          <div class="rail"></div>
+          <div class="winner-banner"><b><span data-player>Vanessa</span> owns the new record</b></div>
+          <i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(location.search);
+      const player = params.get("player") || "Vanessa";
+      const run = Math.max(1, Math.min(15, Number.parseInt(params.get("run"), 10) || 7));
+      const colors = ["#ff6b4f", "#63edf0", "#f3c552", "#9b75db", "#ef3f35", "#35b7ae", "#e9a84b", "#5e96d8"];
+
+      function populate(stage) {
+        stage.querySelector("[data-run]").textContent = run;
+        stage.querySelector("[data-player]").textContent = player;
+        const row = stage.querySelector("[data-ball-row]");
+        row.innerHTML = "";
+        const visible = Math.min(run, 8);
+        const ballSize = visible <= 6 ? 42 : visible === 7 ? 37 : 33;
+        stage.style.setProperty("--ball-size", `${ballSize}px`);
+        stage.style.setProperty("--crown-delay", `${.48 + visible * .13 + .36}s`);
+        stage.style.setProperty("--finish-delay", `${.48 + visible * .13 + .7}s`);
+        for (let index = 0; index < visible; index += 1) {
+          const slot = document.createElement("span");
+          slot.className = `ball-slot${index === visible - 1 ? " winner-ball" : ""}`;
+          slot.style.animationDelay = `${.48 + index * .13}s`;
+          slot.style.setProperty("--ball-color", colors[index % colors.length]);
+          const ball = document.createElement("span");
+          ball.className = `ball${index % 2 ? " striped" : ""}`;
+          const number = document.createElement("b");
+          number.className = "ball-number";
+          number.textContent = index + 1;
+          ball.appendChild(number);
+          slot.appendChild(ball);
+          if (index === visible - 1) {
+            const crown = document.createElement("i");
+            crown.className = "pixel-crown";
+            crown.style.left = `${(ballSize - 34) / 2}px`;
+            crown.style.top = "-26px";
+            slot.appendChild(crown);
+          }
+          row.appendChild(slot);
+        }
+      }
+
+      function replay() {
+        const current = document.querySelector("[data-stage]");
+        const replacement = current.cloneNode(true);
+        current.replaceWith(replacement);
+        populate(replacement);
+      }
+
+      document.querySelector("[data-replay]").addEventListener("click", replay);
+      populate(document.querySelector("[data-stage]"));
+    </script>
+  </body>
+</html>

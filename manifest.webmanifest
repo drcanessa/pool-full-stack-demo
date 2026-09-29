@@ -1,0 +1,13 @@
+{
+  "name": "VC & CV Pool Series — Demo",
+  "short_name": "Pool Demo",
+  "description": "Track every round in Vanessa and Carl's pool series.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09070f",
+  "theme_color": "#09070f",
+  "icons": [
+    { "src": "/assets/icons/pool-neon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/pool-neon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

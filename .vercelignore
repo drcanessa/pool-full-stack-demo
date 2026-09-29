@@ -1,0 +1,6 @@
+.git/
+.tools/
+.venv/
+.vercel/
+supabase/
+.DS_Store

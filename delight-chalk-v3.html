@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loading Chalk the Cue V3…</title>
+</head>
+<body>
+  <script>
+    fetch('/delight-chalk-v1.html')
+      .then(response => response.text())
+      .then(source => {
+        const updated = source
+          .replace('DELIGHT LAB · V1', 'DELIGHT LAB · V3')
+          .replace('<title>Chalk the Cue Delight</title>', '<title>Chalk the Cue V3</title>')
+          .replace('<ellipse cx="274.5" cy="27" rx="20" ry="8" fill="#63edf0"/>', '')
+          .replace('<ellipse cx="274.5" cy="29" rx="10" ry="4" fill="#183b43"/>', '');
+        document.open();
+        document.write(updated);
+        document.close();
+      });
+  </script>
+</body>
+</html>

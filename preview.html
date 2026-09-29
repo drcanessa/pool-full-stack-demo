@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VC &amp; CV Pool Series · iPhone Preview</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 28px;
+        background: radial-gradient(circle at 25% 20%, #164650, transparent 42%), radial-gradient(circle at 75% 25%, #5f201d, transparent 40%), #071014;
+        color: #fff;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+      }
+      .preview-wrap { text-align: center; }
+      .preview-wrap > p { margin: 0 0 14px; color: #82cdd1; font-size: 12px; letter-spacing: .08em; }
+      .phone {
+        position: relative;
+        width: 402px;
+        height: 874px;
+        max-height: calc(100vh - 74px);
+        border: 10px solid #18151c;
+        border-radius: 52px;
+        overflow: hidden;
+        background: #09070f;
+        box-shadow: 0 0 0 2px #49434d, 0 30px 80px rgba(0,0,0,.65);
+      }
+      .phone::after {
+        content: "";
+        position: absolute;
+        z-index: 3;
+        top: 9px;
+        left: 50%;
+        width: 112px;
+        height: 31px;
+        transform: translateX(-50%);
+        border-radius: 18px;
+        background: #050506;
+        pointer-events: none;
+      }
+      iframe { display: block; width: 100%; height: 100%; border: 0; background: #09070f; }
+      @media (max-height: 900px) {
+        .phone { width: 348px; height: min(754px, calc(100vh - 74px)); border-radius: 46px; }
+      }
+      @media (max-width: 450px) {
+        body { padding: 0; }
+        .preview-wrap > p { display: none; }
+        .phone { width: 100vw; height: 100vh; max-height: none; border: 0; border-radius: 0; }
+        .phone::after { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preview-wrap">
+      <p>IPHONE 16 PRO · 402 × 874</p>
+      <div class="phone">
+        <iframe src="/?iphone-preview=1&amp;preview-version=159" title="VC and CV Pool Series iPhone preview"></iframe>
+      </div>
+    </div>
+  </body>
+</html>

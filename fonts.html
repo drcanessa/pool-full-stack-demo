@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VC & CV · Font Preview</title>
+    <style>
+      :root { --cream:#fff1c9; --red:#ef3f35; --cyan:#63edf0; --muted:#91a9ad; }
+      * { box-sizing:border-box; }
+      body { margin:0; min-height:100vh; padding:34px 18px 70px; color:var(--cream); background:radial-gradient(circle at 15% 5%,#15434c,transparent 28%),radial-gradient(circle at 90% 15%,#59201d,transparent 26%),#071014; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      header { width:min(100%,920px); margin:0 auto 24px; }
+      header p { color:var(--cyan); margin:6px 0; }
+      header h1 { margin:0; }
+      .options { width:min(100%,920px); margin:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+      .option { border:2px solid #28525a; background:rgba(8,24,29,.94); padding:20px; box-shadow:6px 6px 0 #020607; }
+      .number { color:var(--red); font-weight:900; letter-spacing:.15em; font-size:.72rem; }
+      .option h2 { margin:12px 0 4px; color:var(--cream); font-size:2rem; line-height:1; }
+      .option h3 { margin:24px 0 10px; color:var(--red); font-size:1rem; }
+      .description { min-height:44px; color:var(--muted); font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .score { display:flex; justify-content:space-around; align-items:center; margin:22px 0; font-size:3.2rem; font-weight:900; }
+      .score span { color:var(--cyan); font-size:1rem; }
+      .button { padding:15px 8px; text-align:center; border:3px solid #7b1f1b; background:var(--red); color:var(--cream); box-shadow:inset 3px 3px #ff8269,inset -3px -3px #a92320,4px 4px #020607; font-weight:900; }
+      .sample { margin-top:18px; padding-top:16px; border-top:1px dotted #38545a; color:#b9c9cb; font-size:.92rem; }
+      .retro { font-family:Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif; letter-spacing:.035em; }
+      .retro .body { font-family:"Avenir Next",Avenir,-apple-system,sans-serif; letter-spacing:0; }
+      .friendly { font-family:"Arial Rounded MT Bold","Trebuchet MS",sans-serif; }
+      .friendly .body { font-family:"Avenir Next",Avenir,-apple-system,sans-serif; }
+      .scoreboard { font-family:"Avenir Next Condensed","DIN Condensed","Arial Narrow",sans-serif; letter-spacing:.04em; }
+      .scoreboard .body { font-family:"Avenir Next",Avenir,-apple-system,sans-serif; letter-spacing:0; }
+      @media (max-width:760px) { .options { grid-template-columns:1fr; } .description { min-height:0; } }
+    </style>
+  </head>
+  <body>
+    <header><p>VC & CV POOL SERIES</p><h1>Font tryouts</h1></header>
+    <main class="options">
+      <article class="option retro">
+        <div class="number">OPTION 1</div><h2>Retro Dive-Bar</h2>
+        <p class="description">Tall, bold display lettering with a clean readable body.</p>
+        <h3>FIRST TO 10</h3><div class="score">7 <span>◆</span> 5</div>
+        <div class="button">ADD ROUND</div><p class="sample body">🏆 Fair win<br />Started Aug 2, 2026</p>
+      </article>
+      <article class="option friendly">
+        <div class="number">OPTION 2</div><h2>Friendly Arcade</h2>
+        <p class="description">Rounded and playful, with less grit and more charm.</p>
+        <h3>FIRST TO 10</h3><div class="score">7 <span>◆</span> 5</div>
+        <div class="button">ADD ROUND</div><p class="sample body">🏆 Fair win<br />Started Aug 2, 2026</p>
+      </article>
+      <article class="option scoreboard">
+        <div class="number">OPTION 3</div><h2>Digital Scoreboard</h2>
+        <p class="description">Squared, sporty, and clean without feeling corporate.</p>
+        <h3>FIRST TO 10</h3><div class="score">7 <span>◆</span> 5</div>
+        <div class="button">ADD ROUND</div><p class="sample body">🏆 Fair win<br />Started Aug 2, 2026</p>
+      </article>
+    </main>
+  </body>
+</html>
